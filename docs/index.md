@@ -1,10 +1,3 @@
-&lt;script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"&gt;&lt;/script&gt;
-        &lt;script type="text/javascript"&gt;
-        $(function () {
-            $("a[href^='http']:not([href*='" + location.hostname + "'])").attr('target', '_blank');
-        });
-        &lt;/script&gt;
-
 # スマートフォンとSORACOM FunkとAWSサービスを用いた画像認識サービスを構築する
 
 # はじめに
@@ -57,7 +50,7 @@ SORACOM Funkを使用することで、デバイス側で複雑なデータ処�
 ハンズオンは、内容によって４つのステップに分割しています。
 当ポータルサイトから各ステップの記事を新規タブで開いて、１つずつ進めてください。
 
-またスマートフォン側で動かすVue.js(JavaScript)コードやLambdaのPythonコードのサンプルソースは[GitHubのリポジトリ](https://github.com/IoTkyoto/soracom-ug-reko-handson)で公開しています。
+またスマートフォン側で動かすVue.js(JavaScript)コードやLambdaのPythonコードのサンプルソースは[GitHubのリポジトリ](https://github.com/IoTkyoto/soracom-ug-reko-handson){:target="_blank"}で公開しています。
 コンテンツ内でもご案内しますが、実装が必要なステップではこちらのサンプルソースをご活用ください。
 コンテンツ内には実装に関わるヒントも掲載していますので、自力でコーディング出来る方は是非チャレンジしてみましょう。
 
