@@ -150,9 +150,9 @@ AWSコンソールにログインし、AWS Cloud9の環境を構築します。
 - ターミナルで以下のコマンドを実行し、Githubからソースコードを取得する
 
 ```sh
-$ git clone https://github.com/IoTkyoto/iot-handson-rekognition
+$ git clone https://github.com/IoTkyoto/soracom-ug-reko-handson
 
-Cloning into 'iot-handson-rekognition'...
+Cloning into 'soracom-ug-reko-handson'...
 remote: Enumerating objects: 369, done.
 remote: Counting objects: 100% (369/369), done.
 remote: Compressing objects: 100% (324/324), done.
@@ -164,7 +164,7 @@ Resolving deltas: 100% (131/131), done.
 - ダウンロードしたリポジトリのWebアプリケーションのディレクトリに移動する
 
 ```sh
-$ cd iot-handson-rekognition/webapp/
+$ cd soracom-ug-reko-handson/webapp/
 ```
 
 ### 1-2-3. アプリケーションのProductionビルドを行う
@@ -200,7 +200,8 @@ $ zip -r archive.zip *
 ### 1-2-5. デプロイファイルを格納するためのS3バケットを作成する
 
 - 圧縮したファイルをAWS環境に格納させるためのS3バケットを作成します
-- バケット名は任意の名前にしてください（例：yamada-reko-handson-deployment）
+- バケット名は任意の名前にしてください  
+（例：yamada-reko-handson-deployment）
 
 ```sh
 $ aws s3 mb s3://yamada-reko-handson-deployment
@@ -266,7 +267,7 @@ $ aws s3 cp archive.zip s3://yamada-reko-handson-deployment/
 
 ### 1-3-5. ブラウザでアクセスする
 
-- Domai部分に表示されているURLをクリックしてください
+- Domain部分に表示されているURLをクリックしてください
 ![1-3-5_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-3-5_1.png)
 
 - 以下のようなページが表示されれば成功です
@@ -274,7 +275,7 @@ $ aws s3 cp archive.zip s3://yamada-reko-handson-deployment/
 
 ### 1-3-6. スマートフォンでハンズオン用アプリを開く
 
-- スマートフォンをインターネットに接続できる状態にし、ブラウザを起動し、ステップ0−3−5でアクセスしたアプリのURLを開いてください
+- スマートフォンをインターネットに接続できる状態にし、ブラウザを起動し、ステップ1−3−5でアクセスしたアプリのURLを開いてください
 - 以下のようなサイトでURLをQRコード化すると簡単にアクセスすることが出来ます
 https://qr.quel.jp/
 
