@@ -50,7 +50,7 @@ SORACOM Funkを使用することで、デバイス側で複雑なデータ処�
 ハンズオンは、内容によって４つのステップに分割しています。
 当ポータルサイトから各ステップの記事を新規タブで開いて、１つずつ進めてください。
 
-またスマートフォン側で動かすVue.js(JavaScript)コードやLambdaのPythonコードのサンプルソースは[GitHubのリポジトリ](https://github.com/IoTkyoto/soracom-ug-reko-handson){:target="_blank"}で公開しています。
+またスマートフォン側で動かすVue.js(JavaScript)コードやLambdaのPythonコードのサンプルソースは[GitHubのリポジトリ](https://github.com/IoTkyoto/soracom-ug-reko-handson)で公開しています。
 コンテンツ内でもご案内しますが、実装が必要なステップではこちらのサンプルソースをご活用ください。
 コンテンツ内には実装に関わるヒントも掲載していますので、自力でコーディング出来る方は是非チャレンジしてみましょう。
 
@@ -61,7 +61,7 @@ SORACOM Funkを使用することで、デバイス側で複雑なデータ処�
 
 **以下のコンテンツを開き、ステップ1を進めてください**
 ※コンテンツは右クリックから新規タブで開いてください
-[ステップ１](https://iotkyoto.github.io/soracom-ug-reko-handson/step1){:target="_blank"}
+[ステップ１](https://iotkyoto.github.io/soracom-ug-reko-handson/step1)
 
 
 # ステップ2. 顔認識用のコレクションを作成する
