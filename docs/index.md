@@ -1,3 +1,10 @@
+&lt;script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"&gt;&lt;/script&gt;
+        &lt;script type="text/javascript"&gt;
+        $(function () {
+            $("a[href^='http']:not([href*='" + location.hostname + "'])").attr('target', '_blank');
+        });
+        &lt;/script&gt;
+
 # スマートフォンとSORACOM FunkとAWSサービスを用いた画像認識サービスを構築する
 
 # はじめに
@@ -61,7 +68,8 @@ SORACOM Funkを使用することで、デバイス側で複雑なデータ処�
 
 **以下のコンテンツを開き、ステップ1を進めてください**
 ※コンテンツは右クリックから新規タブで開いてください
-https://iotkyoto.github.io/soracom-ug-reko-handson/step1
+[ステップ１](https://iotkyoto.github.io/soracom-ug-reko-handson/step1){:target="_blank"}
+
 
 # ステップ2. 顔認識用のコレクションを作成する
 
