@@ -396,65 +396,51 @@ TODO:未作成
 
 ## 3-5. スマートフォンで使用するWebアプリケーションを作成する
 
-### 3-5-1. 顔認証を行うLambdaにアクセスするプログラムを作成する
-
 最後に、前のステップで作成したLambdaファンクションにアクセスするためのVue.jsのプログラムを作成します。
 今回は、ステップ1でデプロイしたWebアプリケーションにすでに組み込まれていますので、処理内容の解説のみを行います。
 
-<!-- ここでは、コードを適宜引用しながら、APIにアクセスしている部分の解説のみを行います。 -->
-
-- Webアプリケーションのリポジトリを開き、以下のファイルを開いてください
-  - `/handson_image_recognition_web/src/assets/api_settings.json`
+- ソースコードはGithubに公開しています
+https://github.com/IoTkyoto/soracom-ug-reko-handson/blob/master/webapp/src/components/SearchFacesFunk.vue
 
 #### 作成プログラムの解説
-
-<!-- TODO: 全て行数確認 -->
 
 ##### `<template></template>`タグ内の要素について
 
 - templateタグ内には、画面に表示する要素をHTMLで記述します
-- コードの26行目のformタグ( `v-text-field`)内にある「`v-model="apiEndpoint"`」および27行目の「 `v-model="apiKey"`」の `v-model`は、このフォームに入力された値をそれぞれ " `apiEndpoint`(APIのエンドポイントの変数)" " `apiKey`(APIキーの変数)"プロパティとしてリアルタイムに反映・保持します
-- コードの30行目のselectタグ( `v-select`)内でも、 `v-model`を利用し" `threshold`(閾値)"の値を保持します。選択可能な要素は、 `:items="[10,20,30,40,50,60,70,80,90,100]"`で指定しています
-- コードの46行目のinputタグ( `v-file-input`)内にある「 `@change="onFileChange"`」は、ここに要素が入力されたことをトリガーに実行したい関数を表しています
-- コードの82行目のbuttonタグ( `v-btn`)内にある「 `@click="execRecognition"`」は、ボタンクリック時に実行したい関数を表しています
+- コードの26行目のTextフィールドタグ( `v-text-field`)内にある「`v-model="soracomEndPoint"`」の `v-model`は、このフォームに入力された値を " `soracomEndPoint`(SORACOMエンドポイント)" 変数値としてリアルタイムに反映・保持します
+- コードの27行目のselectタグ( `v-select`)内でも、 `v-model`を利用し" `threshold`(閾値)"の値を保持します。  
+選択可能な要素は、 `:items="[100,90,80,70,60,50,40,30,20,10]"`で指定しています
+- コードの45行目のファイルINPUTタグ( `v-file-input`)内にある「 `@change="onFileChange"`」は、ファイルが更新されたことをトリガーに実行したい関数を記述しています
+- コードの78行目のbuttonタグ( `v-btn`)内にある「 `@click="execRecognition"`」は、ボタンクリック時に実行したい関数を記述しています
 
 ##### `<script></script>`タグ内の要素について
 
 - 必要なライブラリのimport定義をします
 
-```javascript:SearchFaces.vue
-  import axios from 'axios'; // APIエンドポイントにアクセスするのに利用します"
+```javascript
+  import axios from 'axios'; // SORACOMエンドポイントにアクセスするのに利用します"
 ```
 
-- APIへのアクセスに必要なパラメータを準備する
+- SORACOMエンドポイントへのアクセスに必要なパラメータを準備する
 
 **リクエストヘッダー情報**
 
-APIキーを、`'x-api-key': 'xxxxxxxxxxxxxxxxxxxxxxxx'`という形式で、ヘッダー情報に組み込みます。
-また、やり取りするデータ形式を指定するため `'Content-type': 'application/json'`も入れましょう。
-`this.apiKey`で、このコンポーネントが持つ`apiKey`プロパティの値を取得できます。ここでは、コードの27行目で画面から入力された値が最新値として代入されます。
+リクエストのデータ形式を指定するため `'Content-type': 'application/json'`を設定しています。
 
-```javascript:SearchFaces.vue
-// コンポーネント内で利用する変数の初期値を設定する
-data: () => ({
-  // --他のデータ定義は省略--
-  apiKey: '', 
-}),
-
+```javascript
 // ヘッダー情報を作成する
 const config = {headers: {
   'Content-Type': 'application/json',
-  'x-api-key': this.apiKey,
 }};
 ```
 
 **リクエストボディ情報**
 
-ステップ2-1-3で作成したLambda関数コードが想定しているデータの値を用意します。
-`base64data`には、 `createImage()`関数内の `FileReader`メソッドの実行結果として画像ファイルのbase64データ（data URI scheme形式）を利用します。
+ステップ3-1で作成したLambdaファンクションに渡すデータを構築します。  
+`base64data`には、 `createImage()`関数内の `FileReader`メソッドの実行結果として画像ファイルのbase64データ（data URI scheme形式）を利用します。  
 `threshold`では、`this.threshold`で、コードの30行目で画面で選択された値を最新値として利用します。
 
-```javascript:SearchFaces.vue
+```javascript
 // コンポーネント内で利用する変数の初期値を設定する
 data: () => ({
   // --他のデータ定義は省略--
@@ -485,67 +471,84 @@ createImage(file) {
 },
 ```
 
-- APIにアクセスする
+- SORACOM Funkにアクセスする
 
 最後に、`axios`を利用してリクエストを投げます。
-`apiEndpoint`では、`this.apiEndpoint`で、コードの26行目で画面に入力された値を最新値として利用します。
+`soracomEndpoint`では、`this.soracomEndpoint`で、コードの26行目で画面に入力された値を最新値として利用します。
 リクエストボディのデータは `JSON.stringify()`メソッドでJSON形式に変換しましょう。
 
-```javascript:SearchFaces.vue
+```javascript
 // コンポーネント内で利用する変数の初期値を設定する
 data: () => ({
   // --他のデータ定義は省略--
-  info: '',
-  apiEndpoint: '',
+  soracomEndpoint: '',
 }),
 
 axios
-// APIエンドポイント、リクエストボディ、ヘッダーを引数にPOSTします
-.post(this.apiEndpoint, JSON.stringify(querydata), config)
-// APIアクセス成功時の処理です
+// SORACOMエンドポイント、リクエストボディ、ヘッダーを引数にPOSTします
+.post(this.soracomEndpoint, JSON.stringify(querydata), config)
+// アクセス成功時の処理です
 .then(response => {
-    // response.dataでレスポンスボディにアクセスします
-    this.info = response.data;
-    // ステップ2-1-3で作成した `payloads`内にあるRekognitionの結果データを取得します
-    const faceMatches = this.info.payloads.FaceMatches;
+    const faceMatches = response.data.payloads.FaceMatches;
     if (faceMatches.length == 0) {
-      // 該当する人物がない場合に実行する処理を記述します
+      this.noTarget = '人物を特定できませんでした'
     } else {
-      // 該当する人物がいた場合に実行する処理を記述します
+      this.createAuthenticationData(faceMatches[0]);
     }
+    this.overlay = false;
 })
 // エラーハンドリングを実装します
 .catch(error => {
-  // Lambdaからのエラーにはレスポンスデータがあるので、エラーメッセージを取得します
-  if ('response' in error) {
-    this.errorMessage = error.response.data.msg;
-  } else {
-    // API実行エラーやネットワークエラーの場合、errorにプロパティがありません
-    this.errorMessage = error;
-  }
+  this.errorMessage = error;
+  this.overlay = false;
 });
 ```
 
-- 実行結果を `console.log()`する
-  プログラム実行結果をブラウザのデベロッパーツールのコンソールで確認できる様に`console.log()`メソッドで出力しましょう。デベロッパーツールは、Chromeの場合、「画面右上の設定ボタン > その他のツール > デベロッパーツール」で開くことができます。
+- 実行結果を編集する  
+  通信の実行結果を整形し画面表示用の変数に設定します
+```javascript
+/**
+ * 顔認識結果編集処理
+ */
+createAuthenticationData(faceMatch) {
+  this.faceMatch = faceMatch.Face.ExternalImageId;
+  this.faceMatchConf = Math.round(faceMatch.Similarity * 100) / 100 + '%';
+}
+```
 
-
-### 3-5-2. スマートフォンから顔認証を実行する
+## 3-6. スマートフォンから顔認証を実行する
 
 それでは、実際にスマートフォンからWebアプリケーションを操作して顔認証を行ってみましょう。
 
-- 右上のボタンをクリックし、設定項目を入力する
+### 3-6-1 Webアプリケーションにアクセスする
 
-APIエンドポイントとAPIキーを入力します。しきい値は、デフォルトの80%から変更する場合にボックスから選択してください。最後に[保存]ボタンをクリックします。
+- スマートフォンのWebブラウザからデプロイしたWebアプリケーションにアクセスする
+- 「人物認識画面(SORACOM FUNK)へ」をクリックする
+![3-6-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-6-1_1.png)
 
-- [画像ファイルを選択]をクリックし、顔認証を行いたい画像を選択する
+### 3-6-2 設定内容を確認する
 
-画像はJPEG形式もしくはPNG形式のものを選択してください。画像のプレビューが表示されたら、[人物認識実行]をクリックします。
+- 右上のアイコンをクリックし、設定内容を確認する
+  - SORACOMエンドポイント：リクエストの送信先 SORACOM Funkのエンドポイントが設定されている
+  - しきい値：Collectionの画像と何％の近似の場合に同一人物とするかのしきい値（デフォルト設定は８０％）
+![3-6-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-6-2_1.png)
 
-- 実行結果を確認する
+### 3-6-3 判定を行いたい人物の写真を撮る
 
-画像内に、Rekognitionのコレクションに登録した人物が発見された場合、マッチした人物と信頼度が表示されます。見つからなかった場合、「認識結果」のボックスに「人物を特定できませんでした」と表示されます。
+- [画像ファイルを選択]をクリックし、写真を撮るのか、撮影済みの画像を選択してください
+![3-6-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-6-3_1.png)
 
-また、AWSのコンソールに移動し、CloudWatchでAPIへのアクセス履歴やLambdaのログを確認しましょう。
+### 3-6-4 人物認識を実行する
+
+- 画像のプレビューが表示されたら、[人物認識実行]をクリックしてください
+![3-6-4_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-6-4_1.png)
+
+### 3-6-5 実行結果を確認する
+
+- 画像内に、Rekognitionのコレクションに登録した人物が発見された場合、マッチした人物と信頼度が表示されます。
+- 見つからなかった場合、「認識結果」のボックスに「人物を特定できませんでした」と表示されます。
+![3-6-5_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-6-5_1.png)
+
+- また、余裕があれば、AWSのコンソールに移動し、CloudWatchでAPIへのアクセス履歴やLambdaのログを確認してみましょう。
 
 
