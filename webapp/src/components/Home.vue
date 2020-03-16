@@ -1,6 +1,6 @@
 <template>
   <v-row align="start" justify="center">
-    <v-col cols="12">
+    <!-- <v-col cols="12">
       <v-card color="#385F73" dark>
         <v-card-title class="headline">人物認識</v-card-title>
         <v-card-subtitle>ステップ２：顔認証のWeb APIを作成する</v-card-subtitle>
@@ -34,6 +34,22 @@
           </v-btn>
         </v-card-actions>
       </v-card>
+    </v-col> -->
+    <v-col cols="12">
+      <v-card color="#385F73" dark>
+        <v-card-title class="headline">人物認識(SORACOM Funk)</v-card-title>
+        <v-card-subtitle>ステップ３：顔認証用のファンクションを作成しSORACOM Funk経由で呼び出す</v-card-subtitle>
+        <v-card-text>
+          <div>スマートフォンで撮影した写真に誰が写っているかを認識させましょう</div>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer/>
+            <v-btn text @click="gotoSearchFacesFunkPage()">
+              <v-icon dark>mdi-account-question</v-icon>
+              人物認識画面(SORACOM Funk)へ
+            </v-btn>
+        </v-card-actions>
+      </v-card>
     </v-col>
   </v-row>
 </template>
@@ -49,6 +65,9 @@
       },
       gotoAnalysisfacesPage() {
         this.$router.push('/analysis_faces');
+      },
+      gotoSearchFacesFunkPage() {
+        this.$router.push('/search_faces_funk');
       },
     }
   };

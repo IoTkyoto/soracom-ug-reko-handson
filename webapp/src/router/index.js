@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '@/components/Home.vue'
 import SearchFaces from '@/components/SearchFaces.vue'
 import AnalysisFaces from '@/components/AnalysisFaces.vue'
+import SearchFacesFunk from '@/components/SearchFacesFunk.vue'
 
 Vue.use(VueRouter)
 
@@ -21,6 +22,11 @@ const routes = [
     path: '/analysis_faces',
     name: 'analysis_faces',
     component: AnalysisFaces
+  },
+  {
+    path: '/search_faces_funk',
+    name: 'search_faces_funk',
+    component: SearchFacesFunk
   },
 ]
 
