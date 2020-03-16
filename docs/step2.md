@@ -4,7 +4,7 @@
 
 # ステップ2. 顔認識用のコレクションを作成する
 
-![ステップ2アーキテクチャ図](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step1/architecture_step1.png)
+![ステップ2アーキテクチャ図](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/architecture_step2.png)
 
 ステップ2では、画像に写っている人物を特定するために必要なコレクションを作成します。
 
@@ -102,7 +102,7 @@ Amazon Rekognitionでは、検出した顔に関する情報を `コレクショ
 
 ---
 
-## 1-1. コレクションに登録する画像をアップロードするためのS3バケットを作成
+## 2-1. コレクションに登録する画像をアップロードするためのS3バケットを作成
 
 この項目ではAWSのS3というサービスを用いて、コレクションに登録するための画像の保存先となる「バケット」を作成していきます。
 
