@@ -160,6 +160,7 @@
         };
         const config = {headers: {
           'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
         }};
         // HTTP通信
         axios

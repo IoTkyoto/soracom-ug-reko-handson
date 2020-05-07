@@ -103,8 +103,8 @@ AWSコンソールにログインし、AWS Cloud9の環境を構築します。
 ### 1-1-1. AWSコンソールにログインする
 - 各自のアカウントでAWS環境にログインしてください  
  **使用するユーザーは「AdministratorAccess」権限が付与されていることを前提とします**
-![1-1-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-1-1_1.png)
-![1-1-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-1-1_2.png)
+![1-1-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-1-1_1.png)
+![1-1-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-1-1_2.png)
 
 - リージョンを「東京」言語を「日本語」に切り替えてください
 
@@ -112,24 +112,24 @@ AWSコンソールにログインし、AWS Cloud9の環境を構築します。
 
 - 画面上部の「サービス」をクリックしてください
 - 検索窓に「cloud」と入力し、候補から「Cloud9」を選択してください
-![1-1-2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-1-2.png)
+![1-1-2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-1-2.png)
 
 ### 1-1-3. Cloud9環境を構築する
 
 - [create environment]（環境を作成する）をクリックしてください
-![1-1-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-1-3_1.png)
+![1-1-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-1-3_1.png)
 
 - Nameに「{名前}-handson-env」を入力し、[Next step] をクリックしてください
 例）yamada-handson-env
-![1-1-3_3](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-1-3_3.png)
+![1-1-3_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-1-3_3.png)
 
 - 設定内容はすべてデフォルトのまま画面下部の [Next step] をクリックしてください
-![1-1-3_4](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-1-3_4.png)
-![1-1-3_5](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-1-3_5.png)
+![1-1-3_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-1-3_4.png)
+![1-1-3_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-1-3_5.png)
 
 - 設定内容確認画面で [create environment] をクリックしてください
-![1-1-3_6](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-1-3_6.png)
-![1-1-3_7](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-1-3_7.png)
+![1-1-3_6](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-1-3_6.png)
+![1-1-3_7](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-1-3_7.png)
 
 ※ 新しいタブが開き、Cloud9 IDEのCreate処理が行われますので、環境が立ち上がるまでしばらくお待ちください
 
@@ -140,10 +140,10 @@ AWSコンソールにログインし、AWS Cloud9の環境を構築します。
 ### 1-2-1. ターミナルを開く
 
 - Cloud9 IDE の画面を表示してください
-![1-2-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-2-1_1.png)
+![1-2-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-2-1_1.png)
 
 - Welcomeページを閉じて、新しくターミナルを開いてください
-![1-2-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-2-1_2.png)
+![1-2-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-2-1_2.png)
 
 ### 1-2-2. Githubからファイル一式をCloneする
 
@@ -228,20 +228,20 @@ $ aws s3 cp archive.zip s3://yamada-reko-handson-deployment/
 
 - 画面上部の「サービス」をクリックしてください
 - 検索窓に「ampl」と入力し、候補から「AWS Amplify」を選択してください
-![1-3-1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-3-1.png)
+![1-3-1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-3-1.png)
 
 ### 1-3-2. アプリケーションの作成を行う
 
 - 画面左のメニューをクリックし「すべてのアプリ」をクリックしてください
-![1-3-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-3-2_1.png)
+![1-3-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-3-2_1.png)
 
 - 「アプリの作成」をクリックしてください
-![1-3-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-3-2_2.png)
+![1-3-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-3-2_2.png)
 
 ### 1-3-3. アプリケーションの設定を行う
 
 - 「Deploy without Git provider」（Gitプロバイダー以外でのデプロイ）を選択し「Continue」をクリックしてください
-![1-3-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-3-3_1.png)
+![1-3-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-3-3_1.png)
 
 - 以下の情報を入力し「Save and deploy」をクリックしてください
   - App name（アプリケーション名）
@@ -256,22 +256,22 @@ $ aws s3 cp archive.zip s3://yamada-reko-handson-deployment/
   - Zip file（デプロイ対象ZIPファイル）
     - ステップ1-2-4で作成した圧縮ファイルのファイル名
     - archive.zip
-![1-3-3_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-3-3_2.png)
-![1-3-3_3](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-3-3_3.png)
+![1-3-3_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-3-3_2.png)
+![1-3-3_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-3-3_3.png)
     
 
 ### 1-3-4. デプロイを実施する
 
 - 処理が進行し「success」が表示されればデプロイが完了です
-![1-3-4](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-3-4.png)
+![1-3-4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-3-4.png)
 
 ### 1-3-5. ブラウザでアクセスする
 
 - Domain部分に表示されているURLをクリックしてください
-![1-3-5_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-3-5_1.png)
+![1-3-5_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-3-5_1.png)
 
 - 以下のようなページが表示されれば成功です
-![1-3-5_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-3-5_2.png)
+![1-3-5_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-3-5_2.png)
 
 ### 1-3-6. スマートフォンでハンズオン用アプリを開く
 
