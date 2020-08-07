@@ -17,196 +17,176 @@
 ### 概要
 
 - AWS Cloud9の環境を環境を削除する
+- AWS Rekognition コレクションを削除する
 - AWS Amplifyアプリケーションを削除する
 - S3バケットを削除する
-- AWS Amplify Consoleからシングルページアプリケーションのデプロイを行う
+- IAM情報を削除する
 
 ---
 
-## 1-1. AWS Cloud9 環境を構築する
+## 4-1. AWS Cloud9 環境を削除する
 
-AWSコンソールにログインし、AWS Cloud9の環境を構築します。
+AWSコンソールにログインし、AWS Cloud9の環境を削除します。
 
-### 1-1-1. AWSコンソールにログインする
-- 各自のアカウントでAWS環境にログインしてください  
- **使用するユーザーは「AdministratorAccess」権限が付与されていることを前提とします**
-![1-1-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-1-1_1.png)
-![1-1-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-1-1_2.png)
+### 4-1-1. Cloud9サービスに移動する
 
-- リージョンを「東京」言語を「日本語」に切り替えてください
+- 画面上部の「サービス」をクリックし検索窓に「cloud」と入力し、候補から「Cloud9」を選択してください
+![4-1-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-1_1.png)
 
-### 1-1-2. Cloud9サービスに移動する
+### 4-1-2. 顔認証コレクションを削除する
 
-- 画面上部の「サービス」をクリックしてください
-- 検索窓に「cloud」と入力し、候補から「Cloud9」を選択してください
-![1-1-2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-1-2.png)
+Cloud9環境を削除する前にステップ2-3で作成した顔認識用に作成したコレクションを削除します。
 
-### 1-1-3. Cloud9環境を構築する
+- 右ペインの「＋」をクリックして「New Terminal」をクリックする
+![4-1-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-2_1.png)
 
-- [create environment]（環境を作成する）をクリックしてください
-![1-1-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-1-3_1.png)
-
-- Nameに「{名前}-handson-env」を入力し、[Next step] をクリックしてください
-例）yamada-handson-env
-![1-1-3_3](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-1-3_3.png)
-
-- 設定内容はすべてデフォルトのまま画面下部の [Next step] をクリックしてください
-![1-1-3_4](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-1-3_4.png)
-![1-1-3_5](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-1-3_5.png)
-
-- 設定内容確認画面で [create environment] をクリックしてください
-![1-1-3_6](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-1-3_6.png)
-![1-1-3_7](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-1-3_7.png)
-
-※ 新しいタブが開き、Cloud9 IDEのCreate処理が行われますので、環境が立ち上がるまでしばらくお待ちください
-
-## 1-2. Webアプリケーションのセットアップを行う
-スマートフォンで画面表示するためのWebアプリケーションのセットアップを行います
-今回セットアップするアプリケーションは、JavaScriptフレームワークの１つである [Vue.js](https://jp.vuejs.org/index.html) を使った [SPA(シングルページアプリケーション)](https://ja.wikipedia.org/wiki/%E3%82%B7%E3%83%B3%E3%82%B0%E3%83%AB%E3%83%9A%E3%83%BC%E3%82%B8%E3%82%A2%E3%83%97%E3%83%AA%E3%82%B1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3) と呼ばれるものです
-
-### 1-2-1. ターミナルを開く
-
-- Cloud9 IDE の画面を表示してください
-![1-2-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-2-1_1.png)
-
-- Welcomeページを閉じて、新しくターミナルを開いてください
-![1-2-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-2-1_2.png)
-
-### 1-2-2. Githubからファイル一式をCloneする
-
-- ターミナルで以下のコマンドを実行し、Githubからソースコードを取得する
-
-```sh
-$ git clone https://github.com/IoTkyoto/soracom-ug-reko-handson
-
-Cloning into 'soracom-ug-reko-handson'...
-remote: Enumerating objects: 369, done.
-remote: Counting objects: 100% (369/369), done.
-remote: Compressing objects: 100% (324/324), done.
-remote: Total 369 (delta 131), reused 210 (delta 29), pack-reused 0
-Receiving objects: 100% (369/369), 21.30 MiB | 2.04 MiB/s, done.
-Resolving deltas: 100% (131/131), done.
+- 以下のコマンドを実行し、コレクションの一覧を確認する
+```shell
+$ aws rekognition list-collections 
+{
+    "CollectionIds": [
+        "yamada-authentication-collection",
+        "yamada-authentication-collection2"
+    ],
+    "FaceModelVersions": [
+        "4.0",
+        "4.0"
+    ]
+}
 ```
 
-- ダウンロードしたリポジトリのWebアプリケーションのディレクトリに移動する
-
-```sh
-$ cd soracom-ug-reko-handson/webapp/
+- 以下のコマンドを実行し、対象のコレクションを削除する
+collection-idには自分が削除するコレクションIDを入力してください
+```shell
+$ aws rekognition delete-collection --collection-id "yamada-authentication-collection" 
+{
+    "StatusCode": 200
+}
 ```
 
-### 1-2-3. アプリケーションのProductionビルドを行う
-
-- ターミナルで以下のコマンドを実行し、必要なライブラリファイルをインストールする
-
-```sh
-$ npm install
+- 再度、以下のコマンドを実行し、コレクションの一覧から削除されていることを確認する
+```shell
+$ aws rekognition list-collections 
+{
+    "CollectionIds": [],
+    "FaceModelVersions": []
+}
 ```
 
-※ 処理が終わるまで少し時間がかかります
+### 4-1-3. Cloud9環境を削除する
 
-- ソースコードから静的ファイル(HTML/JavaScript/CSS)を生成する
+- ステップ1-1で作成したCloud9環境の右上の丸を選択し「Delete」ボタンをクリックする
+![4-1-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-3_1.png)
 
-```sh
-$ npm run build
-```
+- 入力欄に「Delete」を入力し「Delete」をクリックする
+![4-1-3_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-3_2.png)
 
-### 1-2-4. 静的リソースディレクトリを圧縮する
+※ バックグラウンドで削除処理が進み、時間が経てば削除されます
 
-- 静的リソースディレクトリに移動する
+## 4-2. AWS Amplifyアプリケーションを削除する
 
-```sh
-$ cd dist
-```
+AWS Amplifyアプリケーションを削除します。
 
-- フォルダ内のファイル一式をZIP形式で圧縮する
-
-```sh
-$ zip -r archive.zip *  
-```
-
-### 1-2-5. デプロイファイルを格納するためのS3バケットを作成する
-
-- 圧縮したファイルをAWS環境に格納させるためのS3バケットを作成します
-- バケット名は任意の名前にしてください  
-（例：yamada-reko-handson-deployment）
-
-```sh
-$ aws s3 mb s3://yamada-reko-handson-deployment
-make_bucket: yamada-reko-handson-deployment
-```
-
-- 以下のコマンドを実行しS3バケットの一覧にバケットが追加されていることを確認します
-
-```sh
-$ aws s3 ls
-```
-
-### 1-2-6. S3にファイルをアップロードする
-
-- 圧縮したZipファイルをS3バケットにアップロードします
-
-```sh
-$ aws s3 cp archive.zip s3://yamada-reko-handson-deployment/
-```
-
-## 1-3. Amplify Consoleでデプロイを行う
-
-### 1-3-1. Amplifyサービスに移動する
+### 4-2-1. Amplifyサービスに移動する
 
 - 画面上部の「サービス」をクリックしてください
 - 検索窓に「ampl」と入力し、候補から「AWS Amplify」を選択してください
-![1-3-1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-3-1.png)
+![4-2-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-2-1_1.png)
 
-### 1-3-2. アプリケーションの作成を行う
+### 4-2-2. AWS Amplifyアプリケーションを削除する
 
-- 画面左のメニューをクリックし「すべてのアプリ」をクリックしてください
-![1-3-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-3-2_1.png)
+- ステップ1-3で作成したAmplifyアプリケーションをクリックする
+![4-2-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-2-2_1.png)
 
-- 「アプリの作成」をクリックしてください
-![1-3-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-3-2_2.png)
+- 右上の「アクション」メニューを開いて「アプリの削除」をクリックする
+![4-2-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-2-2_2.png)
 
-### 1-3-3. アプリケーションの設定を行う
+- 入力欄に「delete」を入力し「Delete」をクリックする
+![4-2-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-2-2_3.png)
 
-- 「Deploy without Git provider」（Gitプロバイダー以外でのデプロイ）を選択し「Continue」をクリックしてください
-![1-3-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-3-3_1.png)
+※ Amplifyアプリケーションが削除されます
 
-- 以下の情報を入力し「Save and deploy」をクリックしてください
-  - App name（アプリケーション名）
-    - 任意（例：yamada_rekognition_handson）
-  - Environment name（環境名）
-    - 任意（例：prod）
-  - Method（デプロイ方法）
-    - Amazon S3
-  - Bucket（デプロイ対象S3バケット）
-    - ステップ1-2-5で作成したデプロイファイル配置用のS3バケット名
-    - yamada-reko-handson-deployment
-  - Zip file（デプロイ対象ZIPファイル）
-    - ステップ1-2-4で作成した圧縮ファイルのファイル名
-    - archive.zip
-![1-3-3_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-3-3_2.png)
-![1-3-3_3](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-3-3_3.png)
-    
+## 4-3. Amazon S3バケットを削除する
 
-### 1-3-4. デプロイを実施する
+S3バケットを削除します。
 
-- 処理が進行し「success」が表示されればデプロイが完了です
-![1-3-4](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-3-4.png)
+### 4-3-1. S3サービスに移動する
 
-### 1-3-5. ブラウザでアクセスする
+- 画面上部の「サービス」をクリックしてください
+- 検索窓に「s3」と入力し、候補から「S3」を選択してください
 
-- Domain部分に表示されているURLをクリックしてください
-![1-3-5_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-3-5_1.png)
+### 4-3-2. Amplifyデプロイ用のS3バケットを削除する
 
-- 以下のようなページが表示されれば成功です
-![1-3-5_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step0/0-3-5_2.png)
+ステップ1-2-5で作成したデプロイファイルを格納するためのバケットを削除します。
 
-### 1-3-6. スマートフォンでハンズオン用アプリを開く
+- バケット検索欄にステップ1-2-5で作成したバケット名の一部を入力し検索する
+![4-3-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-3-2_1.png)
 
-- スマートフォンをインターネットに接続できる状態にし、ブラウザを起動し、ステップ1−3−5でアクセスしたアプリのURLを開いてください
-- 以下のようなサイトでURLをQRコード化すると簡単にアクセスすることが出来ます
-https://qr.quel.jp/
+- 対象バケットの左側にチェックをつけ「削除」ボタンをクリックする
+例）yamada-reko-handson-deployment
+![4-3-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-3-2_2.png)
 
-### 次のステップへ進んでください
+- 削除するバケットの中にオブジェクトがあるため、最初に空にすることを求められます
+「空のバケット設定」をクリックする
+![4-3-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-3-2_3.png)
 
-- ここまでの作業で事前の準備作業は終了です
-- [トップページ](https://iotkyoto.github.io/soracom-ug-reko-handson/)に戻って次のステップに進んでください
+- 空にする対象のバケット名を入力して「空にする」をクリックする
+![4-3-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-3-2_4.png)
+
+- 空になったので「バケットの削除設定」をクリックする
+![4-3-2_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-3-2_5.png)
+
+- 削除するバケット名を入力して「バケットを削除」をクリックする
+![4-3-2_6](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-3-2_6.png)
+
+- 上記と同様の手順で、ステップ2-1で作成したコレクション登録用に作成したバケットを削除してください
+（例）yamada-rekognition-collection-source
+
+## 4-4. AWS Lambdaを削除する
+
+ステップ3−1で作成したAWS Lambdaを削除します。
+
+### 4-4-1. Lambdaサービスに移動する
+
+- 画面上部の「サービス」をクリックしてください
+- 検索窓に「lambda」と入力し、候補から「Lambda」を選択してください
+
+### 4-4-2. AWS Lambdaを削除する
+
+- キーワード検索欄に3-1で作成した関数名の一部を入力し検索する
+![4-4-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-4-2_1.png)
+
+- 対象の関数の横のチェックをつけて「アクション」メニュの「削除」をクリックする
+![4-4-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-4-2_2.png)
+
+- 削除確認画面で「削除」ボタンをクリックする
+![4-4-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-4-2_3.png)
+
+※ 削除確認画面に記載があるようにLambda削除時にはロールとログは削除されませんので、別途削除する必要があります。
+
+## 4-5. IAM情報を削除する
+
+ステップ3−1で作成したロール・ポリシー、ステップ3-2で作成したLambda実行用のIAMユーザーを削除します。
+
+
+### 4-5-1. IAMサービスに移動する
+
+- 画面上部の「サービス」をクリックしてください
+- 検索窓に「iam」と入力し、候補から「IAM」を選択してください
+
+### 4-5-2. IAMユーザーを削除する
+
+- キーワード検索欄にステップ3-2で作成したユーザー名の一部を入力し検索する
+![4-5-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-5-2_1.png)
+
+- 削除対象のIAMユーザーの横にチェックをつけ「ユーザーの削除」をクリックする
+![4-5-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-5-2_2.png)
+
+- 「はい、削除します」をクリックする
+![4-5-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-5-2_3.png)
+
+- 同様の手順で左メニューのロール、ポリシーでもキーワード検索で作成したポリシー・ロールを削除してください
+
+### 以上で全てのステップが完了です
+
+- [トップページ](https://iotkyoto.github.io/soracom-ug-reko-handson/)に戻ってください

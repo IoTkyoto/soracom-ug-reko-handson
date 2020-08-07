@@ -71,15 +71,15 @@ SORACOM Funkは、クラウドサービスの Function を直接実行できる�
 ### 3-1-1. Lambda関数を作成する
 
 - AWSのコンソール画面で、「Lambda」を検索・選択し、[関数の作成]をクリックします。
-![3-1-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/iot-handson-zybo-and-aws/step2/2-2-1_1%E6%9E%9A%E7%9B%AE.png)
+![3-1-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-1_1.png)
 
 - 以下の項目をそれぞれ選択・入力し、[関数の作成]をクリックします。
   - 一から作成
   - 関数名： 任意の名前（例：yamada_lambda_authentication）
   - ランタイム： `Python 3.7`
   - アクセス権限：[ ▼ 実行ロールの選択または作成]を開き、**「基本的なLambdaアクセス権限で新しいロールを作成」** を選択する
-![3-1-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/iot-handson-zybo-and-aws/step2/2-2-1_2%E6%9E%9A%E7%9B%AE.png)
-![3-1-1_3](https://s3.amazonaws.com/docs.iot.kyoto/img/iot-handson-zybo-and-aws/step2/2-2-1_3%E6%9E%9A%E7%9B%AE.png)
+![3-1-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-1_2.png)
+![3-1-1_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-1_3.png)
 
 「基本的なLambdaアクセス権限」を指定することで、Lambda実行時のログをCloudWatch Logsにアップロードするためのロールが自動的に付与されます。
 次のステップで、Lambdaのソースコードから使用するAWSサービスに対する必要な権限をカスタムで追加します。
@@ -90,9 +90,9 @@ SORACOM Funkは、クラウドサービスの Function を直接実行できる�
 - 関数が作成された関数の画面に遷移します。
 - 画面下部の実行ロール欄の「xxxxxxxxx-role-xxxxxxxxロールを表示」をクリックします。
 - このLambdaに紐づいたロール詳細画面が開きます。
-![3-1-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/iot-handson-zybo-and-aws/step2/2-2-2_1%E6%9E%9A%E7%9B%AE.png)
-![3-1-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/iot-handson-zybo-and-aws/step2/2-2-2_2%E6%9E%9A%E7%9B%AE.png)
-![3-1-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/iot-handson-zybo-and-aws/step2/2-2-2_3%E6%9E%9A%E7%9B%AE.png)
+![3-1-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-2_1.png)
+![3-1-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-2_2.png)
+![3-1-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-2_3.png)
 
 - ロール詳細画面の「インラインポリシーの追加」をクリック
 - Rekognitionのコレクションへのアクセスができるように、以下の権限をインラインポリシーとして追加し、任意の名前で登録しましょう
@@ -106,10 +106,8 @@ SORACOM Funkは、クラウドサービスの Function を直接実行できる�
       - Account： すべてにチェック
       - Collection Id：ステップ2-3で作成したコレクション名 (例： `yamada-authentication-collection`)
 
-
-![3-1-2_5](https://s3.amazonaws.com/docs.iot.kyoto/img/iot-handson-zybo-and-aws/step2/2-2-2_0.png)
-![3-1-2_6](https://s3.amazonaws.com/docs.iot.kyoto/img/iot-handson-zybo-and-aws/step2/2-2-2_%E7%A2%BA%E8%AA%8D.png)
-
+![3-1-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-2_4.png)
+![3-1-2_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-2_5.png)
 
 ### 3-1-3. Pythonの関数コードを作成する
     
@@ -120,12 +118,11 @@ Lambdaが実行するPythonコードを作成します。
 - 「関数コード」欄のヘッダー部の右端に「ハンドラ」として `lambda_function.lambda_handler`がデフォルトで指定されています。
   これは、当Lambdaが呼び出された際に実行される関数が `lambda_function.py`の中の`lambda_handler`という関数だ、という意味です。
 
-- サンプルプログラムは[こちら](https://github.com/IoTkyoto/iot-handson-rekognition/blob/master/step2/lambda_authentication.py)の `lambda_authentication.py`をご確認ください。
+- サンプルプログラムは[こちら](https://github.com/IoTkyoto/soracom-ug-reko-handson/blob/master/sources/step3/lambda_authentication.py)の `lambda_authentication.py`をご確認ください。
 
 - サンプルプログラムの内容をコピーし、関数コード欄にペーストしてください
 
-<!-- TODO: 行数確認 -->
-- コードの14行目の以下の部分の「`{collection_id}`」を、ステップ1-6-1で作成したコレクション名（例：`yamada-authentication-collection`）に変更してください
+- コードの15行目の以下の部分の「`{collection_id}`」を、ステップ1-6-1で作成したコレクション名（例：`yamada-authentication-collection`）に変更してください
 
 ```python:変更前
   # Rekognitionで作成したコレクション名を入れてください
@@ -137,7 +134,7 @@ Lambdaが実行するPythonコードを作成します。
 ```
 
 - 右上の「保存」をクリックしてください
-![3-1-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/iot-handson-zybo-and-aws/step2/2-2-3.png)
+![3-1-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-3_1.png)
 
 #### 作成プログラムの解説
 
@@ -221,7 +218,7 @@ try文を用いるなどして、Rekognitionへのアクセスの成否を反映
 Lambdaの関数コードを保存したら、API Gatewayから渡されてくる想定のイベントデータを用意し、Lambdaに渡して、実際の動きをテストしてみましょう。
 
 - 関数画面右上の[テスト]をクリックしてください。
-![3-1-4_1](https://s3.amazonaws.com/docs.iot.kyoto/img/iot-handson-zybo-and-aws/step2/2-2-4_1.png)
+![3-1-4_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-4_1.png)
 
 - テストイベントの設定画面で以下の内容を入力して「作成」をクリックしてください。
   - 新しいテストイベントの作成：チェック
@@ -229,16 +226,16 @@ Lambdaの関数コードを保存したら、API Gatewayから渡されてくる
   - イベント名：任意の名前（例：AuthTest）
   - テストデータ：以下のjsonファイルの内容。画像のデータや閾値を適宜変更してください。
 
-- テストデータは[こちら](https://github.com/IoTkyoto/iot-handson-rekognition/blob/master/step2/lambda_authentication_event_example.json)の `lambda_authentication_event_example.json`をご確認ください。
+- テストデータは[こちら](https://github.com/IoTkyoto/soracom-ug-reko-handson/blob/master/sources/step3/lambda_authentication_event_example.json)の `lambda_authentication_event_example.json`をご確認ください。
 
 - テストデータの内容をコピーし、テストイベントのコード欄に貼り付けてください
 
 ![3-1-4_2](https://s3.amazonaws.com/docs.iot.kyoto/img/iot-handson-zybo-and-aws/step2/2-2-4_2.png)
 
 - 作成したら、[テスト]をクリックし、実行結果を確認しましょう。関数の実行結果は、中をスクロールして見ることが可能です
-![3-1-4_3](https://s3.amazonaws.com/docs.iot.kyoto/img/iot-handson-zybo-and-aws/step2/2-2-4_3.png)
-![3-1-4_4](https://s3.amazonaws.com/docs.iot.kyoto/img/iot-handson-zybo-and-aws/step2/2-2-4_4.png)
-![3-1-4_5](https://s3.amazonaws.com/docs.iot.kyoto/img/iot-handson-zybo-and-aws/step2/2-2-4_5.png)
+![3-1-4_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-4_3.png)
+![3-1-4_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-4_4.png)
+![3-1-4_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-4_5.png)
 
 - テストの結果として、「statusCode:200」と「ExternalImageId」として対象者のタグが返ってきていれば成功です。
 
@@ -387,11 +384,62 @@ ARNの表記はAWSサービスによって異なります。
 
 ## 3-4. SORACOM Funkの設定を行う
 
-TODO:未作成
+SORACOMコンソールにログインし、SORACOM Funkの設定を行ったSIMグループを新しく作成し、今回使用する対象のSIMに設定します。
 
+### 3-4-1. SIMグループを作成する
+まずは、SORACOM Funkの設定を行います。
 
+- SORACOMコンソールにログインする
+![3-4-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_1.png)
 
+- 左上の「Menu」ボタンをクリックし、「SIMグループ」を選択する
+![3-4-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_2.png)
+![3-4-1_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_3.png)
 
+- 「＋追加」をクリックする
+![3-4-1_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_4.png)
+
+- グループ名を入力して「グループ作成」をクリックする（例：yamada_handson_funk）
+![3-4-1_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_5.png)
+
+- グループ設定画面で「> SORACOM Funk 設定」をクリックして開く
+![3-4-1_6](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_6.png)
+![3-4-1_7](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_7.png)
+
+- スイッチをONにし、サービスに「AWS LAmbda」、送信データ形式に「JSON」を選択する
+![3-4-1_8](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_8.png)
+
+- 認証情報で「認証情報を新規作成する...」を選択する
+![3-4-1_9](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_9.png)
+
+- 3-3-6で作成した認証情報を入力し「登録」をクリックする
+例）
+認証情報ID「yamada_aws_lambda_cert」
+概要「AWS Lambdaの認証情報」
+種別「AWS 認証情報」
+AWS Access Key ID 「3-3-6で取得したAccess Key」
+AWS Secret Access Key「3-3-6で取得したSecret Access Key」
+![3-4-1_10](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_10.png)
+
+- 関数のARNにステップ3-1で作成したLambdaのARNを入力し「保存」クリック
+![3-4-1_11](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_11.png)
+
+- 完了メッセージが出れば設定完了
+
+### 3-4-2. SIMにSIMグループを紐付ける
+対象となるSIMに、3−4−1で作成したSIMグループを紐付けます。
+
+- 左上の「Menu」ボタンをクリックし、「SIM管理」を選択する
+![3-4-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-2_1.png)
+
+- 対象のSIMの左端のチェクボックスにチェックをつけ、右クリックメニューから「所属グループ変更」をクリックする
+![3-4-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-2_2.png)
+
+- 新しい所属グループに先ほど3-4-1で作成したSIMグループを選択し「グループ変更」をクリックする
+![3-4-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-2_3.png)
+
+- SIM一覧画面の対象SIMのグループが3-4-1で作成したSIMグループになっていることを確認する
+![3-4-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-2_4.png)
 
 
 ## 3-5. スマートフォンで使用するWebアプリケーションを作成する

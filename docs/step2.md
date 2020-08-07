@@ -125,9 +125,9 @@ https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/dev/UsingBucket.html
 
 ### 2-1-1. AWSのコンソール画面で「S3」を検索・選択し[バケットを作成する]をクリックする
 
-![2-1-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step1/1-1-1_1.png)
+![2-1-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-1-1_1.png)
 
-![2-1-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step1/1-1-1_2.png)
+![2-1-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-1-1_2.png)
 
 ### 2-1-2. バケット名を入力し[次へ]をクリックする
 
@@ -135,7 +135,7 @@ https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/dev/UsingBucket.html
 - リージョン：アジアパシフィック（東京）
 - 既存のバケットから設定をコピー：ブランク
 
-![2-1-2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step1/1-1-2_1.png)
+![2-1-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-1-2_1.png)
 
 **【注意】 バケット名の一意性**
 
@@ -157,7 +157,7 @@ S3バケットの命名のガイドラインについては[バケットの制�
 
 今回はオプションの設定は使用しませんので、何もチェックをつけずに「次へ」をクリックしてください。
 
-![2-1-3](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step1/1-1-3_1.png)
+![2-1-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-1-3_1.png)
 
 ---
 
@@ -192,14 +192,14 @@ https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/dev/ServerLogs.html
 「パブリックアクセスが有効」な状態のS3バケットは、世界中の人々に公開されている状態となります。
 
 S3バケットのパブリックアクセスが原因となった顧客情報の漏洩などの事件も発生しておりますので、アクセス権限の設定はお気をつけください。
-![2-1-4](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step1/1-1-4_1.png)
+![2-1-4_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-1-4_1.png)
 
 
 ### 2-1-5. 確認画面に表示されている内容を確認し[バケットを作成]をクリックする
 
 バケットの作成リージョンが「アジアパシフィック（東京）」になっていることや、パブリックアクセスをブロックするようになっていることを確かめてからバケットを作成します。
 
-![2-1-5](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step1/1-1-5_1.png)
+![2-1-5_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-1-5_1.png)
 
 
 ## 2-2. S3バケットに画像をアップロードする
@@ -237,7 +237,7 @@ S3バケットのパブリックアクセスが原因となった顧客情報の
 
 ### 2-3-1. コレクションを作成する
 
-- AWSコンソールからステップ0-2で作成したCloud9を開いてください
+- AWSコンソールからステップ1-1で作成したCloud9を開いてください
 - ターミナル上で以下のコマンドを実行しコレクションを作成してください  
   コマンドの詳細は、公式ドキュメント「[コレクションの作成](https://docs.aws.amazon.com/ja_jp/rekognition/latest/dg/create-collection-procedure.html)」をご確認ください。
 
@@ -291,8 +291,8 @@ $ aws rekognition index-faces \
   コマンドの詳細は、[こちら](https://docs.aws.amazon.com/ja_jp/rekognition/latest/dg/add-faces-to-collection-procedure.html)の公式ドキュメントをご参考ください。
 
   - `--image`
-      - パラメーター内の `"Bucket"`属性の値には、ステップ2-1-1で作成したバケット名、 
-      - `"Name"`属性の値には、ステップ2-1-2でアップロードした画像ファイル名を、それぞれ入力します
+      - パラメーター内の `"Bucket"`属性の値には、ステップ2-1で作成したバケット名、 
+      - `"Name"`属性の値には、ステップ2-2でアップロードした画像ファイル名を、それぞれ入力します
 
   - `--collection-id`
       - 前のステップで作成したコレクション名を入力します
@@ -371,8 +371,8 @@ $ aws rekognition search-faces-by-image \
   コマンドの詳細は、[こちら](https://docs.aws.amazon.com/ja_jp/rekognition/latest/dg/search-face-with-image-procedure.html)の公式ドキュメントをご参考ください。
 
   - `--image`
-      - パラメーター内の `"Bucket"`属性の値には、ステップ1-1で作成したバケット名、 
-      - `"Name"`属性の値には、ステップ1-2でアップロードした画像ファイル名を、それぞれ入力します
+      - パラメーター内の `"Bucket"`属性の値には、ステップ2-1で作成したバケット名、 
+      - `"Name"`属性の値には、ステップ2-2でアップロードした画像ファイル名を、それぞれ入力します
 
   - `--collection-id`
       - 前のステップで作成したコレクション名を入力します
