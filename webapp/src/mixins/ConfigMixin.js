@@ -3,6 +3,7 @@ const searchFaces = {
   region: 'ap-northeast-1',
   stage: 'prod',
   resource: 'search',
+  apiEndpoint: '',
   apiKey: '',
   threshold: 80,
 };

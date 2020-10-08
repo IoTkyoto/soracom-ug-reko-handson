@@ -23,11 +23,8 @@
               </v-card-title>
               <v-card-text>
                 <v-container>
-                  <v-text-field v-model="apiId" label="API ID名" clearable></v-text-field>
-                  <v-text-field v-model="region" label="リージョン" clearable></v-text-field>
-                  <v-text-field v-model="stage" label="ステージ名" clearable></v-text-field>
-                  <v-text-field v-model="resource" label="リソース名" clearable></v-text-field>
-                  <v-text-field v-model="apiKey" label="APIキー" clearable></v-text-field>
+                  <v-textarea v-model="apiEndpoint" label="APIエンドポイント" auto-grow rows="1" row-height="15" clearable></v-textarea>
+                  <v-textarea v-model="apiKey" label="APIキー" auto-grow rows="1" row-height="15" clearable></v-textarea>
                   <v-select
                     v-model="threshold"
                     :items="[10,20,30,40,50,60,70,80,90,100]"
@@ -79,22 +76,9 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-            <v-btn color="warning" class="ma-2 white--text" x-large @click="execRecognition" v-if="uploadedImage">
+            <v-btn color="warning" class="ma-2 white--text" x-large @click="execRekognition" v-if="uploadedImage">
               <v-icon dark>mdi-cloud-upload</v-icon>
               &nbsp;人物認識実行
-            </v-btn>
-          <v-spacer />
-        </v-card-actions>
-      </v-card>
-      <v-card>
-        <v-card-text>
-          {{test_text}}
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-            <v-btn color="warning" class="ma-2 white--text" x-large @click="execMetaGet">
-              <v-icon dark>mdi-cloud-upload</v-icon>
-              &nbsp;Meta取得実行
             </v-btn>
           <v-spacer />
         </v-card-actions>
@@ -121,15 +105,14 @@
       settingDialogRecognition: false,
       faceMatch: false,
       faceMatchConf: null,
-      test_text: 'testAPI',
     }),
     created() {
-      this.apiId = this.config.searchConfig.apiId;
-      this.region = this.config.searchConfig.region;
-      this.stage = this.config.searchConfig.stage;
-      this.resource = this.config.searchConfig.resource;
-      this.apiKey = this.config.searchConfig.apiKey
-      this.threshold = this.config.searchConfig.threshold
+      // Configミックスインの情報を設定
+      this.apiEndpoint = this.config.searchConfig.apiEndpoint;
+      this.apiKey = this.config.searchConfig.apiKey;
+      this.threshold = this.config.searchConfig.threshold;
+      // SORACOMメタデータサービスにアクセスしAPI接続情報を取得
+      this.getSoracomMetadata();
     },
     methods: {
       /**
@@ -160,17 +143,11 @@
       /**
        * 顔認識実行処理
        */
-      execRecognition() {
+      async execRekognition() {
         // 設定情報入力チェック
         this.errorMessage = ''
-        if (!this.apiId) {
-          this.errorMessage = "設定画面でAPI ID名を入力してください";
-        } else if (!this.region) {
-          this.errorMessage = "設定画面でAPIのリージョンを入力してください";
-        } else if (!this.stage) {
-          this.errorMessage = "設定画面でAPIのステージ名を入力してください";
-        } else if (!this.resource) {
-          this.errorMessage = "設定画面でAPIのリソース名を入力してください";
+        if (!this.apiEndpoint) {
+          this.errorMessage = "設定画面でAPIエンドポイントを入力してください";
         } else if (!this.apiKey) {
           this.errorMessage = "設定画面でAPIキーを入力してください";
         }else if (!this.threshold) {
@@ -191,12 +168,9 @@
           'Content-Type': 'application/json',
           'x-api-key': this.apiKey,
         }};
-        const apiEndpoint = 
-          'https://' + this.apiId + '.execute-api.' + this.region + '.amazonaws.com/'  
-          + this.stage + '/' + this.resource
         // API呼び出し
         axios
-          .post(apiEndpoint, JSON.stringify(querydata), config)
+          .post(this.apiEndpoint, JSON.stringify(querydata), config)
           .then(response => {
               const faceMatches = response.data.payloads.FaceMatches;
               if (faceMatches.length == 0) {
@@ -212,34 +186,28 @@
           });
       },
       /**
-       * APIテスト実行処理
+       * SORACOMメタデータ(userdata)取得
        */
-      execMetaGet() {
-      //   var soracomAPI = new soracom(
-      //     {authKeyId: 'keyId-lsloWDKbjdEdNIUMnsezvgRMnIjbXgqR',
-      //     authKey:'secret-i8K1A9atUfkHXtIojTooY6Mk4nCPnJMqFcnsjnhjQy8If7VUxSy5k2P23022XUoV'});
-      //   soracomAPI.get('/groups',function(err,res){
-      //     console.log({err:err,res:res});
-      //   });
-        // 実行時パラメータ構築
-        // const querydata = {
-        //   // 'authKeyId': 'keyId-lsloWDKbjdEdNIUMnsezvgRMnIjbXgqR',
-        //   // 'authKey': 'secret-i8K1A9atUfkHXtIojTooY6Mk4nCPnJMqFcnsjnhjQy8If7VUxSy5k2P23022XUoV'
-        // };
-        // const config = {headers: {
-        //   'Content-Type': 'application/json;charset=utf-8',
-        //   // 'Access-Control-Allow-Origin': '*',
-        //   // 'crossDomain': false,
-        //   // 'mode': 'no-cors',
-        // }};
-        // HTTP通信
+      getSoracomMetadata() {
+        // API接続情報の初期化
+        this.apiEndpoint = '';
+        this.apiKey = '';
+        // HTTP非同期通信
         axios
-          .get("http://metadata.soracom.io/v1/subscriber")
+          .get("http://metadata.soracom.io/v1/userdata", { timeout : 1000 })
           .then(response => {
-              this.test_text = response;
+            if (response.status == 200) {
+              // SIMグループから取得したuserdataを内部変数に保存
+              this.apiEndpoint = response.data.apiEndpoint;
+              this.apiKey = response.data.apiKey;
+            } else {
+              console.log('レスポンスステータス：' + response.status);
+              this.errorMessage = 'メタデータの取得に失敗しました。API接続情報を手動で入力してください。';
+            }
           })
           .catch(error => {
-            this.errorMessage = error;
+            // メタデータ取得時にエラーが発生した場合はエンドポイント・ApiKeyクリア
+            this.errorMessage = 'メタデータの取得に失敗しました。API接続情報を手動で入力してください：' + error;
           });
       },
       /**

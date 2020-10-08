@@ -44,7 +44,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer/>
-            <v-btn text @click="gotoSearchFacesFunkPage()">
+            <v-btn text @click="gotoSearchFacesSoracomPage()">
               <v-icon dark>mdi-account-question</v-icon>
               人物認識画面(SORACOM)へ
             </v-btn>
@@ -66,8 +66,8 @@
       gotoAnalysisfacesPage() {
         this.$router.push('/analysis_faces');
       },
-      gotoSearchFacesFunkPage() {
-        this.$router.push('/search_faces_funk');
+      gotoSearchFacesSoracomPage() {
+        this.$router.push('/search_faces_soracom');
       },
     }
   };
