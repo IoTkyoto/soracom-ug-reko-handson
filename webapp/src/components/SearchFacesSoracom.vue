@@ -23,10 +23,14 @@
               </v-card-title>
               <v-card-text>
                 <v-container>
-                  <v-text-field v-model="soracomEndPoint" label=" SORACOMエンドポイント" clearable></v-text-field>
+                  <v-text-field v-model="apiId" label="API ID名" clearable></v-text-field>
+                  <v-text-field v-model="region" label="リージョン" clearable></v-text-field>
+                  <v-text-field v-model="stage" label="ステージ名" clearable></v-text-field>
+                  <v-text-field v-model="resource" label="リソース名" clearable></v-text-field>
+                  <v-text-field v-model="apiKey" label="APIキー" clearable></v-text-field>
                   <v-select
                     v-model="threshold"
-                    :items="[100,90,80,70,60,50,40,30,20,10]"
+                    :items="[10,20,30,40,50,60,70,80,90,100]"
                     label="しきい値"
                     clearable>
                   </v-select>
@@ -93,7 +97,7 @@
   import axios from 'axios';
 
   export default {
-    name: 'SearchFacesFunk',
+    name: 'SearchFaces',
 
     data: () => ({
       uploadedImage: '',
@@ -104,11 +108,14 @@
       settingDialogRecognition: false,
       faceMatch: false,
       faceMatchConf: null,
-      soracomEndPoint: 'http://funk.soracom.io',
-      threshold: 80,
     }),
     created() {
-      // 初期処理何もしない
+      this.apiId = this.config.searchConfig.apiId;
+      this.region = this.config.searchConfig.region;
+      this.stage = this.config.searchConfig.stage;
+      this.resource = this.config.searchConfig.resource;
+      this.apiKey = this.config.searchConfig.apiKey
+      this.threshold = this.config.searchConfig.threshold
     },
     methods: {
       /**
@@ -142,8 +149,16 @@
       execRecognition() {
         // 設定情報入力チェック
         this.errorMessage = ''
-        if (!this.soracomEndPoint) {
-          this.errorMessage = "設定画面でSORACOMエンドポイントを入力してください";
+        if (!this.apiId) {
+          this.errorMessage = "設定画面でAPI ID名を入力してください";
+        } else if (!this.region) {
+          this.errorMessage = "設定画面でAPIのリージョンを入力してください";
+        } else if (!this.stage) {
+          this.errorMessage = "設定画面でAPIのステージ名を入力してください";
+        } else if (!this.resource) {
+          this.errorMessage = "設定画面でAPIのリソース名を入力してください";
+        } else if (!this.apiKey) {
+          this.errorMessage = "設定画面でAPIキーを入力してください";
         }else if (!this.threshold) {
           this.errorMessage = "設定画面でしきい値を入力してください";
         }
@@ -160,11 +175,14 @@
         };
         const config = {headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
+          'x-api-key': this.apiKey,
         }};
-        // HTTP通信
+        const apiEndpoint = 
+          'https://' + this.apiId + '.execute-api.' + this.region + '.amazonaws.com/'  
+          + this.stage + '/' + this.resource
+        // API呼び出し
         axios
-          .post(this.soracomEndPoint, JSON.stringify(querydata), config)
+          .post(apiEndpoint, JSON.stringify(querydata), config)
           .then(response => {
               const faceMatches = response.data.payloads.FaceMatches;
               if (faceMatches.length == 0) {

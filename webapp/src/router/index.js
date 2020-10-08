@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '@/components/Home.vue'
 import SearchFaces from '@/components/SearchFaces.vue'
 import AnalysisFaces from '@/components/AnalysisFaces.vue'
-import SearchFacesFunk from '@/components/SearchFacesFunk.vue'
+import SearchFacesSoracom from '@/components/SearchFacesSoracom.vue'
 
 Vue.use(VueRouter)
 
@@ -24,9 +24,9 @@ const routes = [
     component: AnalysisFaces
   },
   {
-    path: '/search_faces_funk',
-    name: 'search_faces_funk',
-    component: SearchFacesFunk
+    path: '/search_faces_soracom',
+    name: 'search_faces_soracom',
+    component: SearchFacesSoracom
   },
 ]
 
