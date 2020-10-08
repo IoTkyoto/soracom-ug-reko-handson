@@ -86,6 +86,19 @@
           <v-spacer />
         </v-card-actions>
       </v-card>
+      <v-card>
+        <v-card-text>
+          {{test_text}}
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+            <v-btn color="warning" class="ma-2 white--text" x-large @click="execMetaGet">
+              <v-icon dark>mdi-cloud-upload</v-icon>
+              &nbsp;Meta取得実行
+            </v-btn>
+          <v-spacer />
+        </v-card-actions>
+      </v-card>
       <v-overlay :value="overlay">
         <v-progress-circular indeterminate size="64"></v-progress-circular>
       </v-overlay>
@@ -108,6 +121,7 @@
       settingDialogRecognition: false,
       faceMatch: false,
       faceMatchConf: null,
+      test_text: 'testAPI',
     }),
     created() {
       this.apiId = this.config.searchConfig.apiId;
@@ -195,6 +209,37 @@
           .catch(error => {
             this.errorMessage = error;
             this.overlay = false;
+          });
+      },
+      /**
+       * APIテスト実行処理
+       */
+      execMetaGet() {
+      //   var soracomAPI = new soracom(
+      //     {authKeyId: 'keyId-lsloWDKbjdEdNIUMnsezvgRMnIjbXgqR',
+      //     authKey:'secret-i8K1A9atUfkHXtIojTooY6Mk4nCPnJMqFcnsjnhjQy8If7VUxSy5k2P23022XUoV'});
+      //   soracomAPI.get('/groups',function(err,res){
+      //     console.log({err:err,res:res});
+      //   });
+        // 実行時パラメータ構築
+        // const querydata = {
+        //   // 'authKeyId': 'keyId-lsloWDKbjdEdNIUMnsezvgRMnIjbXgqR',
+        //   // 'authKey': 'secret-i8K1A9atUfkHXtIojTooY6Mk4nCPnJMqFcnsjnhjQy8If7VUxSy5k2P23022XUoV'
+        // };
+        // const config = {headers: {
+        //   'Content-Type': 'application/json;charset=utf-8',
+        //   // 'Access-Control-Allow-Origin': '*',
+        //   // 'crossDomain': false,
+        //   // 'mode': 'no-cors',
+        // }};
+        // HTTP通信
+        axios
+          .get("http://metadata.soracom.io/v1/subscriber")
+          .then(response => {
+              this.test_text = response;
+          })
+          .catch(error => {
+            this.errorMessage = error;
           });
       },
       /**
