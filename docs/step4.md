@@ -1,192 +1,235 @@
-# ステップ4. ハンズオン終了後のあと片づけ（スマートフォンとSORACOM FunkとAWSサービスを用いた画像認識サービスを構築する）
+# ステップ４. SORACOMメタデータサービスの設定を行う（SORACOM回線を使ったスマートフォンとAWSサービスを用いた画像認識サービスを構築する）
 
-*当コンテンツは、エッジデバイスとしてスマートフォン、クラウドサービスとしてAWSを利用し、エッジデバイスとクラウド間とのデータ連携とAWSサービスを利用した画像認識を体験し、IoT/画像認識システムの基礎的な技術の習得を目指す方向けのハンズオン(体験学習)コンテンツ「[スマートフォンとSORACOM FunkとAWSサービスを用いた画像認識サービスを構築する](https://iotkyoto.github.io/soracom-ug-reko-handson/)」の一部です。*
+*当コンテンツは、エッジデバイスとしてスマートフォン、クラウドサービスとしてAWSを利用し、エッジデバイスとクラウド間とのデータ連携とAWSサービスを利用した画像認識を体験し、IoT/画像認識システムの基礎的な技術の習得を目指す方向けのハンズオン(体験学習)コンテンツ「[SORACOM回線を使ったスマートフォンとAWSサービスを用いた画像認識サービスを構築する](https://iotkyoto.github.io/soracom-ug-reko-handson/)」の一部です。*
 
-# ステップ4. ハンズオン終了後のあと片づけ
+# ステップ４. SORACOMメタデータサービスの設定を行う
 
-ご利用いただいたAWSの各種サービスには無料利用枠がございますが、無料利用枠を超えた場合は従量課金が発生します。
+![ステップ４アーキテクチャ図](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/architecture_step4.png)
 
-ハンズオンを行い、環境が不要となれば各種リソースを削除することを推奨します。
+ステップ４では、対象のSIMに[メタデータサービス](https://dev.soracom.io/jp/start/metadata/)の設定を行い、デバイス側からメタデータサービスを利用する仕組みを構築します。
+
+メタデータサービスの設定は、SORACOM管理コンソールから設定することが可能です。
+まずは、SIMグループを作成しメタデータサービスの有効化を行い、対象のSIMに作成したSIMグループを割り当てます。
 
 ---
 
 ### 目的
 
-- 作成したAWS環境の各種リソースを削除する
+- SORACOMメタデータサービスの設定方法を知る
+- メタデータサービスの使い方を知る
 
 ### 概要
 
-- AWS Cloud9の環境を環境を削除する
-- AWS Rekognition コレクションを削除する
-- AWS Amplifyアプリケーションを削除する
-- S3バケットを削除する
-- IAM情報を削除する
+- SORACOM管理コンソールからSIMグループを作成する
+- SIMグループにメタデータサービスの設定を行う
+- 対象のSIMにSIMグループを割り当てる
+- メタデータサービスを利用するプログラムを作成する
 
 ---
 
-## 4-1. AWS Cloud9 環境を削除する
+### ＜SORACOM メタデータサービスとは？＞
 
-AWSコンソールにログインし、AWS Cloud9の環境を削除します。
+SORACOM Air for セルラーのメタデータサービスは、デバイス自身が使用している IoT SIM の情報を HTTP 経由で取得、更新することができます。
+また、書き込みアクセスが許可されている場合には、速度の変更、タグの追加など、各種操作が行えます。
 
-### 4-1-1. Cloud9サービスに移動する
+- デバイス単体でAPIコールをする場合にも、SDKを使用する必要なく、非常に単純なコードでAPIコールが行える
+- デバイスにクレデンシャルを持たせる必要がなくなる
+- メタデータサービスの利用は、グループ単位で設定する
+- 許可されたグループに属する IoT SIM はメタデータサービスを利用することができる
 
-- 画面上部の「サービス」をクリックし検索窓に「cloud」と入力し、候補から「Cloud9」を選択してください
+メタデータに対する読み込み・書き込みリクエストは、内部的には https://api.soracom.io/v1/subscribers/{SIMのIMSI} 配下のAPIリクエストにマッピングされる仕組みとなっています。API リファレンスに掲載されている subscribers/{imsi} 配下のものであれば全てのAPIを実行可能です。
+
+メタデータサービスの設定方法、ユースケースは、[SORACOM開発者向けサイト](https://dev.soracom.io/jp/start/metadata/)をご確認ください。
+
+---
+
+## 4-1. SIMグループを作成しメタデータのユーザデータを設定する
+
+SORACOM管理コンソールにログインし、SIMグループを作成します。
+続いて、メタデータサービスの有効化とユーザデータの設定を行います。
+
+### 4-1-1. SORACOM管理コンソールにログインする
+
+まずは、[SORACOM管理コンソール](https://console.soracom.io/#/?coverage_type=jp)にアクセスし、ログインします。
+ルートアカウント、SAMユーザーのいずれでも問題ありません。
+
+- ルートアカウントログイン
 ![4-1-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-1_1.png)
 
-### 4-1-2. 顔認証コレクションを削除する
+- SAMユーザーログイン
+![4-1-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-1_2.png)
 
-Cloud9環境を削除する前にステップ2-3で作成した顔認識用に作成したコレクションを削除します。
+### 4-1-2. SIMグループを作成する
 
-- 右ペインの「＋」をクリックして「New Terminal」をクリックする
+メタデータサービスを設定するためのSIMグループを作成します。
+
+- SORACOM管理コンソールの左端のメニューをクリックする
 ![4-1-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-2_1.png)
 
-- 以下のコマンドを実行し、コレクションの一覧を確認する
-```shell
-$ aws rekognition list-collections 
-{
-    "CollectionIds": [
-        "yamada-authentication-collection",
-        "yamada-authentication-collection2"
-    ],
-    "FaceModelVersions": [
-        "4.0",
-        "4.0"
-    ]
-}
-```
+- メニューのSIMグループをクリックする
+![4-1-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-2_2.png)
 
-- 以下のコマンドを実行し、対象のコレクションを削除する
-collection-idには自分が削除するコレクションIDを入力してください
-```shell
-$ aws rekognition delete-collection --collection-id "yamada-authentication-collection" 
-{
-    "StatusCode": 200
-}
-```
+- SIMグループ画面の「＋追加」をクリックする
+![4-1-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-2_3.png)
 
-- 再度、以下のコマンドを実行し、コレクションの一覧から削除されていることを確認する
-```shell
-$ aws rekognition list-collections 
-{
-    "CollectionIds": [],
-    "FaceModelVersions": []
-}
-```
+- グループ名を入力し「グループ作成」をクリックする
+  - グループ名：任意(例：handson_metadata)
+![4-1-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-2_4.png)
 
-### 4-1-3. Cloud9環境を削除する
+### 4-1-3. SIMグループにメタデータサービスの設定を行う
 
-- ステップ1-1で作成したCloud9環境の右上の丸を選択し「Delete」ボタンをクリックする
+メタデータサービスの設定を行っていきます。
+
+- 「SORACOM Air for Cellular 設定」をクリックし入力エリアを表示する
 ![4-1-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-3_1.png)
 
-- 入力欄に「Delete」を入力し「Delete」をクリックする
+- 「メタデータサービス」のスイッチをクリックし有効化する
+- 「読み取り専用」にチェックをつける
 ![4-1-3_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-3_2.png)
 
-※ バックグラウンドで削除処理が進み、時間が経てば削除されます
+※ 「読み取り専用」チェックを外せば、メタデータを更新することも可能です
 
-## 4-2. AWS Amplifyアプリケーションを削除する
+- CORS対応で「許可するオリジン」にメタサービス呼び出し元のURLを入力する
+    - 許可するオリジン：http://soracom-ug-reko-handson.s3-website-ap-northeast-1.amazonaws.com
+![4-1-3_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-3_3.png)
 
-AWS Amplifyアプリケーションを削除します。
+- API接続情報を「ユーザーデータ」にJSON形式で入力し、「JSON形式で保存」にチェックする
+![4-1-3_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-3_4.png)
 
-### 4-2-1. Amplifyサービスに移動する
+```json
+{
+  "apiEndpoint": "各自で作成したAPIエンドポイント",
+  "apiKey": "各自で作成したAPIキー"
+}
+```
+---
 
-- 画面上部の「サービス」をクリックしてください
-- 検索窓に「ampl」と入力し、候補から「AWS Amplify」を選択してください
-![4-2-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-2-1_1.png)
+**APIのエンドポイントの確認方法**
 
-### 4-2-2. AWS Amplifyアプリケーションを削除する
+AWSのコンソールで、ステップ3-2-6でデプロイしたAPIのステージを選択し、さらにリソースを選択すると、「URLの呼び出し」でAPIのリソースパスが表示されます。
 
-- ステップ1-3で作成したAmplifyアプリケーションをクリックする
-![4-2-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-2-2_1.png)
+![3-2-8-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-8-1_1.png)
 
-- 右上の「アクション」メニューを開いて「アプリの削除」をクリックする
-![4-2-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-2-2_2.png)
+**APIキーの確認方法**
 
-- 入力欄に「delete」を入力し「Delete」をクリックする
-![4-2-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-2-2_3.png)
+AWSのコンソールで、ステップ3-2-7で作成したAPIキーを[表示]します。
 
-※ Amplifyアプリケーションが削除されます
+![3-2-8-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-8-1_2.png)
 
-## 4-3. Amazon S3バケットを削除する
+### ＜CORSとは？＞
 
-S3バケットを削除します。
+オリジン間リソース共有機能（CORS＝Cross-Origin Resource Sharing）
 
-### 4-3-1. S3サービスに移動する
+セキュリティ上の理由から、ブラウザーは、スクリプトによって開始されるオリジン間 HTTPリクエストを制限しています。
+追加の HTTP ヘッダーを使用して、あるオリジンで動作しているウェブアプリケーションに、異なるオリジンにある選択されたリソースへのアクセス権を与えるようブラウザーに指示するための仕組みです。
 
-- 画面上部の「サービス」をクリックしてください
-- 検索窓に「s3」と入力し、候補から「S3」を選択してください
+https://developer.mozilla.org/ja/docs/Web/HTTP/CORS
 
-### 4-3-2. Amplifyデプロイ用のS3バケットを削除する
+### ＜メタデータサービス入力項目 補足説明＞
 
-ステップ1-2-5で作成したデプロイファイルを格納するためのバケットを削除します。
+- メタデータサービス設定
+サービス自体を有効とするか否かのボタンです。
+ONにすることで、メタデータサービスが有効となります。
 
-- バケット検索欄にステップ1-2-5で作成したバケット名の一部を入力し検索する
-![4-3-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-3-2_1.png)
+- 読み取り専用チェックボックス
+デバイスからのアクセス(API操作)を読み込みのみとしたい場合には、ここにチェックを付けてください。
 
-- 対象バケットの左側にチェックをつけ「削除」ボタンをクリックする
-例）yamada-reko-handson-deployment
-![4-3-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-3-2_2.png)
+- 許可するオリジン
+CORS(Cross-Origin Resource Sharing) 用のオリジン設定です。
+外部サイトから Ajax 等でアクセスを行う際に設定が必要です。
+Access-Control-Allow-Origin ヘッダーに指定するドメインとなります。
 
-- 削除するバケットの中にオブジェクトがあるため、最初に空にすることを求められます
-「空のバケット設定」をクリックする
-![4-3-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-3-2_3.png)
+- ユーザーデータ
+ユーザー独自のデータを任意に定義できます。
 
-- 空にする対象のバケット名を入力して「空にする」をクリックする
-![4-3-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-3-2_4.png)
+---
 
-- 空になったので「バケットの削除設定」をクリックする
-![4-3-2_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-3-2_5.png)
+- その他の項目は変更を行わずに下方の「保存」をクリックする
+![4-1-3_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-3_5.png)
 
-- 削除するバケット名を入力して「バケットを削除」をクリックする
-![4-3-2_6](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-3-2_6.png)
+- SIMグループへのメタデータの設定は以上で完了
 
-- 上記と同様の手順で、ステップ2-1で作成したコレクション登録用に作成したバケットを削除してください
-（例）yamada-rekognition-collection-source
+### 4-1-4. 対象SIMにSIMグループを割り当てる
 
-## 4-4. AWS Lambdaを削除する
+ステップ4-1-2で作成したSIMグループを、対象のSIMに割り当てます。
 
-ステップ3−1で作成したAWS Lambdaを削除します。
+- SORACOM管理コンソールの左上のメニューをクリックし、メニューの「SIM管理」をクリックする
+![4-1-4_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-4_1.png)
 
-### 4-4-1. Lambdaサービスに移動する
+- 対象のSIMのチェックボックスをONにし、画面上部の「操作」から「所属グループ変更」をクリックする
+![4-1-4_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-4_2.png)
 
-- 画面上部の「サービス」をクリックしてください
-- 検索窓に「lambda」と入力し、候補から「Lambda」を選択してください
+- 「新しい所属グループ」にステップ4-1-2で作成したSIMグループを選択し「グループ変更」をクリックする
+![4-1-4_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-4_3.png)
 
-### 4-4-2. AWS Lambdaを削除する
-
-- キーワード検索欄に3-1で作成した関数名の一部を入力し検索する
-![4-4-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-4-2_1.png)
-
-- 対象の関数の横のチェックをつけて「アクション」メニュの「削除」をクリックする
-![4-4-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-4-2_2.png)
-
-- 削除確認画面で「削除」ボタンをクリックする
-![4-4-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-4-2_3.png)
-
-※ 削除確認画面に記載があるようにLambda削除時にはロールとログは削除されませんので、別途削除する必要があります。
-
-## 4-5. IAM情報を削除する
-
-ステップ3−1で作成したロール・ポリシー、ステップ3-2で作成したLambda実行用のIAMユーザーを削除します。
+- SIM一覧表示画面で対象SIMのグループに選択したSIMグループ名が表示されていれば設定は完了
+![4-1-4_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-4_4.png)
 
 
-### 4-5-1. IAMサービスに移動する
+## 4-2. 【参考】メタデータサービスを利用するプログラムの作成
 
-- 画面上部の「サービス」をクリックしてください
-- 検索窓に「iam」と入力し、候補から「IAM」を選択してください
+今回はWebアプリケーションは構築済みですので、参考情報としてどのようにWebアプリケーション（Vue.jsプログラム）側を実装するのかをご紹介します。
 
-### 4-5-2. IAMユーザーを削除する
+デプロイしたWebアプリケーションにはすでにAPIにアクセスするためのプログラムが組み込まれていますので、こちらの章ではコードを適宜引用しながら、APIにアクセスしている部分の解説を行います。
 
-- キーワード検索欄にステップ3-2で作成したユーザー名の一部を入力し検索する
-![4-5-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-5-2_1.png)
+- Webアプリケーションのリポジトリを開き、以下のファイルを開いてください
+  - https://github.com/IoTkyoto/soracom-ug-reko-handson/blob/master/webapp/src/components/SearchFacesSoracom.vue
 
-- 削除対象のIAMユーザーの横にチェックをつけ「ユーザーの削除」をクリックする
-![4-5-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-5-2_2.png)
 
-- 「はい、削除します」をクリックする
-![4-5-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-5-2_3.png)
+#### SORACOMメタデータの取得方法
 
-- 同様の手順で左メニューのロール、ポリシーでもキーワード検索で作成したポリシー・ロールを削除してください
+- 188行目〜212行目がSORACOMメタデータサービスでユーザーデータを取得しているメソッドとなります。
+  - 197行目で「http://metadata.soracom.io/v1/userdata」に対しGetメソッドを実行しています
+  - 201〜202行目で取得したレスポンスからユーザーデータを取り出し、キーを指定し個別データの読み込みを行っています。
 
-### 以上で全てのステップが完了です
+```javascript:SearchFacesSoracom.vue
+      /**
+       * SORACOMメタデータ(userdata)取得
+       */
+      getSoracomMetadata() {
+        // API接続情報の初期化
+        this.apiEndpoint = '';
+        this.apiKey = '';
+        // HTTP非同期通信
+        axios
+          .get("http://metadata.soracom.io/v1/userdata", { timeout : 1000 })
+          .then(response => {
+            if (response.status == 200) {
+              // SIMグループから取得したuserdataを内部変数に保存
+              this.apiEndpoint = response.data.apiEndpoint;
+              this.apiKey = response.data.apiKey;
+            } else {
+              console.log('レスポンスステータス：' + response.status);
+              this.errorMessage = 'メタデータの取得に失敗しました。API接続情報を手動で入力してください。';
+            }
+          })
+          .catch(error => {
+            // メタデータ取得時にエラーが発生した場合はエンドポイント・ApiKeyクリア
+            this.errorMessage = 'メタデータの取得に失敗しました。API接続情報を手動で入力してください：' + error;
+          });
+      },
+```
 
-- [トップページ](https://iotkyoto.github.io/soracom-ug-reko-handson/)に戻ってください
+#### メタデータ取得メソッドの呼び出しと保存
+
+- 109行目〜116行目が画面表示(生成)時に実行される処理となっています。
+- 115行目でメタデータ取得メソッドを呼び出し内部変数に保存しています。
+
+```javascript:SearchFacesSoracom.vue
+// 画面作成時にコンポーネント内で利用する変数の初期値を設定する
+    created() {
+      // Configミックスインの情報を設定
+      this.apiEndpoint = this.config.searchConfig.apiEndpoint;
+      this.apiKey = this.config.searchConfig.apiKey;
+      this.threshold = this.config.searchConfig.threshold;
+      // SORACOMメタデータサービスにアクセスしAPI接続情報を取得
+      this.getSoracomMetadata();
+    },
+```
+
+
+
+### 次のステップへ進んでください
+
+- ここまでの作業で事前の準備作業は終了です
+- [トップページ](https://iotkyoto.github.io/soracom-ug-reko-handson/)に戻って次のステップに進んでください

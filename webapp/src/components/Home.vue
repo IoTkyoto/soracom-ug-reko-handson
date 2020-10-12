@@ -37,8 +37,8 @@
     </v-col> -->
     <v-col cols="12">
       <v-card color="#385F73" dark>
-        <v-card-title class="headline">人物認識(SORACOM)</v-card-title>
-        <v-card-subtitle>ステップ３：顔認証用のファンクションを作成しSORACOM経由で呼び出す</v-card-subtitle>
+        <v-card-title class="headline">顔画像認識(SORACOM)</v-card-title>
+        <v-card-subtitle>顔画像認識用のAPIを作成しSORACOM経由で呼び出す</v-card-subtitle>
         <v-card-text>
           <div>スマートフォンで撮影した写真に誰が写っているかを認識させましょう</div>
         </v-card-text>
@@ -46,7 +46,7 @@
           <v-spacer/>
             <v-btn text @click="gotoSearchFacesSoracomPage()">
               <v-icon dark>mdi-account-question</v-icon>
-              人物認識画面(SORACOM)へ
+              顔画像認識画面(SORACOM)へ
             </v-btn>
         </v-card-actions>
       </v-card>

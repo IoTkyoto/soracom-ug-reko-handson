@@ -1,14 +1,15 @@
-# ステップ1. 環境準備（スマートフォンとSORACOM FunkとAWSサービスを用いた画像認識サービスを構築する）
+# ステップ1. 環境準備（SORACOM回線を使ったスマートフォンとAWSサービスを用いた画像認識サービスを構築する）
 
-*当コンテンツは、エッジデバイスとしてスマートフォン、クラウドサービスとしてAWSを利用し、エッジデバイスとクラウド間とのデータ連携とAWSサービスを利用した画像認識を体験し、IoT/画像認識システムの基礎的な技術の習得を目指す方向けのハンズオン(体験学習)コンテンツ「[スマートフォンとSORACOM FunkとAWSサービスを用いた画像認識サービスを構築する](https://iotkyoto.github.io/soracom-ug-reko-handson/)」の一部です。*
+*当コンテンツは、エッジデバイスとしてスマートフォン、クラウドサービスとしてAWSを利用し、エッジデバイスとクラウド間とのデータ連携とAWSサービスを利用した画像認識を体験し、IoT/画像認識システムの基礎的な技術の習得を目指す方向けのハンズオン(体験学習)コンテンツ「[SORACOM回線を使ったスマートフォンとAWSサービスを用いた画像認識サービスを構築する](https://iotkyoto.github.io/soracom-ug-reko-handson/)」の一部です。*
 
 # ステップ1. 環境準備
 
-今回のハンズオンでは、エッジデバイスであるスマートフォンで表示するWeb画面と、クラウド側で稼働するWebAPIを構築します。
+今回のハンズオンでは、エッジデバイスであるスマートフォンで表示するWebアプリケーションと、クラウド側で稼働するWebAPIを構築します。
 
 AWS CLIを使ってのコマンドラインでの操作や、プログラムを読み書きする作業は、ブラウザ上で動く統合開発環境サービスである「AWS Cloud9」を使用します。
+今回使用するサンプルプログラムやテストデータはGithubに公開していますので、そちらからファイル一式を取得します。
 
-また、Webページを「AWS Amplify Console」サービスを使って各自のAWS環境にデプロイし、スマートフォンで表示出来ることを確認します。
+また、スマートフォンで表示するWebアプリケーションは、ハンズオン参加者全員で同じWebサイトを使用することが可能なため、構築済みのWebアプリケーションを用意しています。
 
 ---
 
@@ -16,13 +17,11 @@ AWS CLIを使ってのコマンドラインでの操作や、プログラムを�
 
 - AWS Cloud9 環境を立ち上げ、実際に使ってみる
 - AWS CLIを使ってみる
-- AWS Amplify Console で WEBアプリケーションのデプロイを行う経験をする
 
 ### 概要
 
 - AWSコンソールからCloud9環境を構築する
 - AWS CLIを使ってS3にファイルをアップロードする
-- AWS Amplify Consoleからシングルページアプリケーションのデプロイを行う
 
 ---
 
@@ -65,35 +64,6 @@ AWSコマンドラインインターフェースの略で、AWSサービスを�
 
 より詳しく知りたい場合は[公式サイト](https://aws.amazon.com/jp/cli/)をご確認ください。
 
-### ＜AWS Amplify Consoleとは？＞
-
-AWS Amplify Consoleは、静的WEBサイトあるいはシングルページアプリケーション(SPA)を公開する環境を簡単に作成出来るサービスです。
-AWSマネジメントコンソールから設定と操作を行うだけで簡単に公開出来ます。
-また、GitHubやCodeCommitなどのリポジトリに接続することで、特定ブランチが更新されると自動的にビルドを行いデプロイを行わせることも可能となり、継続的なアプリケーションのアップデートを行うCI/CD環境を簡単に構築することが出来ます。
-
-- スケーラブルでグローバルなホスティング環境を提供
-  - Amazon CloudFront グローバルエッジネットワークを活用
-- 対応するアプリケーション
-  - 静的サイト(HTML/JavaScript/CSS)
-  - SPAフロントエンドのフレームワーク(React、Angular、Vue.js、Ionic、Emberなど)
-  - 静的サイトジェネレータ(Gatsby,Eleventy,Hugo,VuePress,Jekyllなど)
-  シングルページアプリケーション
-- 多様なデプロイ元ソースに対応
-  - Gitプロバイダー
-    - GitHub,BitBucket.GitLab,AWS CodeCommit
-  - Gitプロバイダー以外
-    - ブラウザへのドラッグ&ドロップ
-    - S3にアップロードしたZIPファイル
-    - 外部URL
-- 機能ブランチ単位での環境構築
-- HTTPSアクセスを標準提供、カスタムドメイン設定も可能
-- ユーザ名・パスワードによる限定アクセス設定も可能
-- ビルド & デプロイ、ホスティングという 2 つの機能に対して[料金](https://aws.amazon.com/jp/amplify/console/pricing/)が発生
-  - ビルド & デプロイ 0.01USD/ビルド分
-  - ホスティングサービス 1 GB あたり0.15USD
-
-より詳しく知りたい場合は[公式サイト](https://aws.amazon.com/jp/amplify/console/)をご確認ください。
-
 ---
 
 ## 1-1. AWS Cloud9 環境を構築する
@@ -133,9 +103,9 @@ AWSコンソールにログインし、AWS Cloud9の環境を構築します。
 
 ※ 新しいタブが開き、Cloud9 IDEのCreate処理が行われますので、環境が立ち上がるまでしばらくお待ちください
 
-## 1-2. Webアプリケーションのセットアップを行う
-スマートフォンで画面表示するためのWebアプリケーションのセットアップを行います
-今回セットアップするアプリケーションは、JavaScriptフレームワークの１つである [Vue.js](https://jp.vuejs.org/index.html) を使った [SPA(シングルページアプリケーション)](https://ja.wikipedia.org/wiki/%E3%82%B7%E3%83%B3%E3%82%B0%E3%83%AB%E3%83%9A%E3%83%BC%E3%82%B8%E3%82%A2%E3%83%97%E3%83%AA%E3%82%B1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3) と呼ばれるものです
+## 1-2. 必要なプログラム・データを取得する
+今回使用するプログラムやデータをCloud9環境に取得します
+必要なファイルは、ソースコード管理サービスの[Github](https://github.co.jp/)に保管しています。
 
 ### 1-2-1. ターミナルを開く
 
@@ -161,41 +131,7 @@ Receiving objects: 100% (369/369), 21.30 MiB | 2.04 MiB/s, done.
 Resolving deltas: 100% (131/131), done.
 ```
 
-- ダウンロードしたリポジトリのWebアプリケーションのディレクトリに移動する
-
-```sh
-$ cd soracom-ug-reko-handson/webapp/
-```
-
-### 1-2-3. アプリケーションのProductionビルドを行う
-
-- ターミナルで以下のコマンドを実行し、必要なライブラリファイルをインストールする
-
-```sh
-$ npm install
-```
-
-※ 処理が終わるまで少し時間がかかります
-
-- ソースコードから静的ファイル(HTML/JavaScript/CSS)を生成する
-
-```sh
-$ npm run build
-```
-
-### 1-2-4. 静的リソースディレクトリを圧縮する
-
-- 静的リソースディレクトリに移動する
-
-```sh
-$ cd dist
-```
-
-- フォルダ内のファイル一式をZIP形式で圧縮する
-
-```sh
-$ zip -r archive.zip *  
-```
+- 左側のEnvironment部分に「soracom-ug-reko-handson」ディレクトリが出来ていればClone完了です。
 
 ### 1-2-5. デプロイファイルを格納するためのS3バケットを作成する
 
@@ -222,62 +158,19 @@ $ aws s3 ls
 $ aws s3 cp archive.zip s3://yamada-reko-handson-deployment/
 ```
 
-## 1-3. Amplify Consoleでデプロイを行う
+## 1-3. AWS CLIを動かす
 
-### 1-3-1. Amplifyサービスに移動する
+ステップ２で使用するため、Cloud9でAWS CLIが動くことを確認します。
 
-- 画面上部の「サービス」をクリックしてください
-- 検索窓に「ampl」と入力し、候補から「AWS Amplify」を選択してください
-![1-3-1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-3-1.png)
+### 1-3-1. S3バケットの一覧を取得する
 
-### 1-3-2. アプリケーションの作成を行う
+- ターミナルから以下のコマンドを実行しS3バケットの一覧を取得してください
 
-- 画面左のメニューをクリックし「すべてのアプリ」をクリックしてください
-![1-3-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-3-2_1.png)
+```sh
+$ aws s3 ls
+```
 
-- 「アプリの作成」をクリックしてください
-![1-3-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-3-2_2.png)
-
-### 1-3-3. アプリケーションの設定を行う
-
-- 「Deploy without Git provider」（Gitプロバイダー以外でのデプロイ）を選択し「Continue」をクリックしてください
-![1-3-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-3-3_1.png)
-
-- 以下の情報を入力し「Save and deploy」をクリックしてください
-  - App name（アプリケーション名）
-    - 任意（例：yamada_rekognition_handson）
-  - Environment name（環境名）
-    - 任意（例：prod）
-  - Method（デプロイ方法）
-    - Amazon S3
-  - Bucket（デプロイ対象S3バケット）
-    - ステップ1-2-5で作成したデプロイファイル配置用のS3バケット名
-    - yamada-reko-handson-deployment
-  - Zip file（デプロイ対象ZIPファイル）
-    - ステップ1-2-4で作成した圧縮ファイルのファイル名
-    - archive.zip
-![1-3-3_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-3-3_2.png)
-![1-3-3_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-3-3_3.png)
-    
-
-### 1-3-4. デプロイを実施する
-
-- 処理が進行し「success」が表示されればデプロイが完了です
-![1-3-4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-3-4.png)
-
-### 1-3-5. ブラウザでアクセスする
-
-- Domain部分に表示されているURLをクリックしてください
-![1-3-5_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-3-5_1.png)
-
-- 以下のようなページが表示されれば成功です
-![1-3-5_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-3-5_2.png)
-
-### 1-3-6. スマートフォンでハンズオン用アプリを開く
-
-- スマートフォンをインターネットに接続できる状態にし、ブラウザを起動し、ステップ1−3−5でアクセスしたアプリのURLを開いてください
-- 以下のようなサイトでURLをQRコード化すると簡単にアクセスすることが出来ます
-https://qr.quel.jp/
+- エラーとならずにアカウントに存在しているS3バケットの一覧が表示されればAWS CLIは使用可能状態です。
 
 ### 次のステップへ進んでください
 

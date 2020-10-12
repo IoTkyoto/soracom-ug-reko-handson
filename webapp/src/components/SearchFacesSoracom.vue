@@ -9,7 +9,7 @@
       </v-alert>
       <v-card class="elevation-12">
         <v-toolbar color="indigo lighten-3" dark flat>
-          <v-toolbar-title>人物認識</v-toolbar-title>
+          <v-toolbar-title>顔画像認識</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-dialog v-model="settingDialogRecognition" persistent max-width="600px">
             <template v-slot:activator="{ on }">
@@ -19,7 +19,7 @@
             </template>
             <v-card>
               <v-card-title>
-                <span class="headline">人物認識設定</span>
+                <span class="headline">顔画像認識設定</span>
               </v-card-title>
               <v-card-text>
                 <v-container>
@@ -78,7 +78,7 @@
           <v-spacer />
             <v-btn color="warning" class="ma-2 white--text" x-large @click="execRekognition" v-if="uploadedImage">
               <v-icon dark>mdi-cloud-upload</v-icon>
-              &nbsp;人物認識実行
+              &nbsp;顔画像認識実行
             </v-btn>
           <v-spacer />
         </v-card-actions>

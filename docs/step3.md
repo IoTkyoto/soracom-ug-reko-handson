@@ -1,35 +1,53 @@
-# ステップ3. 顔認証用のファンクションを作成しSORACOM Funk経由で呼び出す（スマートフォンとSORACOM FunkとAWSサービスを用いた画像認識サービスを構築する）
+# ステップ3. 顔認証のWeb APIを作成する（SORACOM回線を使ったスマートフォンとAWSサービスを用いた画像認識サービスを構築する）
 
-*当コンテンツは、エッジデバイスとしてスマートフォン、クラウドサービスとしてAWSを利用し、エッジデバイスとクラウド間とのデータ連携とAWSサービスを利用した画像認識を体験し、IoT/画像認識システムの基礎的な技術の習得を目指す方向けのハンズオン(体験学習)コンテンツ「[スマートフォンとSORACOM FunkとAWSサービスを用いた画像認識サービスを構築する](https://iotkyoto.github.io/soracom-ug-reko-handson/)」の一部です。*
+*当コンテンツは、エッジデバイスとしてスマートフォン、クラウドサービスとしてAWSを利用し、エッジデバイスとクラウド間とのデータ連携とAWSサービスを利用した画像認識を体験し、IoT/画像認識システムの基礎的な技術の習得を目指す方向けのハンズオン(体験学習)コンテンツ「[SORACOM回線を使ったスマートフォンとAWSサービスを用いた画像認識サービスを構築する](https://iotkyoto.github.io/soracom-ug-reko-handson/)」の一部です。*
 
-# ステップ3. 顔認証用のファンクションを作成しSORACOM Funk経由で呼び出す
+# ステップ3. 顔認証のWeb APIを作成する
 
 ![ステップ3アーキテクチャ図](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/architecture_step3.png)
 
-ステップ3では、前ステップでS3バケットにアップロードされた画像を分析し「事前登録済みの人物が写っているかを判定し、写っている場合は誰なのかを判定する」という機能を持ったクラウドファンクションを作成し、デバイス側からSORACOM Funk経由で呼び出す仕組みを構築します。
+ステップ3では、アップロードされた画像を分析し、「事前登録済みの人物が写っているか、写っている場合は誰かを判定する」機能を持ったWeb APIを作成し、デバイス側からAPIを呼び出す仕組みを構築します。
 
 まずは、「**[Amazon Rekognition（以下、Rekognition）](https://aws.amazon.com/jp/rekognition/)**」を利用して「コレクション」を作成し、認識対象となる顔を登録します。
-
 次に、作成したコレクションを使って顔の認識を行う「**[AWS Lambda（以下、Lambda）](https://aws.amazon.com/jp/lambda/)**」を作成します。
-
-さいごに、作成したLambdaにアクセスするために「**[SORACOM Funk（以下、Funk）](https://soracom.jp/services/funk/)**」を作成します。
+さいごに、作成したLambdaにHTTPでアクセスするために「**[Amazon API Gateway（以下、API Gateway）](https://aws.amazon.com/jp/api-gateway/)**」を作成します。
 
 ---
 
 ### 目的
 
-- デバイスからSORACOM Funk経由でクラウド側のファンクションを利用する方法を学ぶ
+- デバイスから外部APIに利用する方法を学ぶ
 - JSON形式のファイルの取り扱いを学ぶ
-- AWS Lambdaの作成方法を知る
-- AWSの画像認識サービスを知る
+- AWSでのAPI構築方法を学ぶ
+- AWSの画像認識機能を知る
 
 ### 概要
 
-- 顔認証用のLambdaを作成し、SORACOM Funk経由でアクセスする
- - 認証情報はIAMを使用する
+- 顔認証用のWebAPIを作成し、デバイスからWebAPIを利用する
+ - APIのリクエスト・レスポンスを取り扱う
+ - WebAPIの認証はAPIキーを使う
 - 顔認識用のコレクションを作成し、対象者が画像に写っているかどうかの画像認識を行う
 
 ---
+
+### ＜Web APIとは？＞
+
+HTTPプロトコルを利用してインターネットを介したアプリケーション間のやりとりを行うためのインターフェースです。
+Web APIの代表的な実装方式として、RESTとSOAPが存在しており、今回作成するWeb APIはREST APIとなります。
+
+- REST
+  - RESTとはRepresentational State Transferの略称
+  - 以下のRESTの思想に従って実装されたAPIをRESTful API（またはREST API）と呼ぶ
+    - HTTPのメソッド（命令）でデータ操作種別（CRUD）を表す
+    - ステートレス
+    - URIで操作対象のリソースを判別可能にする
+    - レスポンスとしてXMLもしくはJSONで操作結果を戻す
+- SOAP
+  - SOAPは、XMLを利用したWebサービス連携プロトコル
+  - XMLで記述された「SOAPメッセージ」と呼ばれるデータをやりとりすることで、メッセージを交換する
+
+様々な公開Web APIが提供されていることや、わかりやすいデータのやり取りから、Web APIを利用してモノリシックなシステムをマイクロサービス化することが現在の潮流となっています。
+
 
 ### ＜AWS Lambdaとは？＞
 
@@ -44,42 +62,50 @@ AWS Lambdaは、サーバーをプロビジョニングしたり管理する必�
 
 より詳しく知りたい場合は[公式サイト](https://aws.amazon.com/jp/lambda/)をご確認ください。
 
-### ＜SORACOM Funkとは？＞
+### ＜Amazon API Gatewayとは？＞
 
-SORACOM Funkは、クラウドサービスの Function を直接実行できるサービスです。
+Amazon API Gatewayは、開発者があらゆる規模でAPIの公開、保守、モニタリング、セキュリティ保護、運用を簡単に行えるフルマネージドサービスです。
+セキュアで信頼性の高いAPIを大規模に稼働させるために、差別化にはつながらない面倒な作業を処理する従量制のサービスです。
+AWS、または他のウェブサービス、AWSクラウドに保存されているデータにアクセスするAPIを作成できます。ユースケースとしては、モバイルアプリやWebアプリケーションのバックエンドAPIとして、API GatewayとLambdaを連携させて、サーバレスなREST API環境を構築するケースでよく使われます。
 
-一般的にIoTデバイスは電力消費などを抑える目的からシンプルな構成であることが多く、そのような場合はデバイス側での複雑なデータ処理が難しい場合があります。また、デバイス側がこのような複雑なデータ処理が可能な場合も、多くの電力を消費します。
+- スケーラブル
+    - 最大数十万規模の同時APIコールの受け入れと処理に伴うすべてのタスクを取り扱うことが可能
+    - 内部でCloudFrontの仕組みを利用しており、スケーラビリティやアベイラビリティの面でCloudFrontの特徴を享受している
+- APIの作成およびデプロイが容易
+    - APIのステージング管理が可能
+    - Canaryリリースのデプロイが可能
+- ステートフル(WebSocket)およびステートレス(REST)なAPIのサポート
+- 強力で柔軟性に優れた認証メカニズム
+    - IAMポリシー、Lambdaオーソライザー関数やCognitoユーザープールなどでの認証が可能
+- APIリクエスト数に応じた安価な[従量課金](https://aws.amazon.com/jp/api-gateway/pricing/)
 
-そのような場合、FaaSと連携することで、IoTデバイスのリソースを使用することなく、クラウドの膨大なリソースで複雑な処理を実行することができます。
+より詳しく知りたい場合は[公式サイト](https://aws.amazon.com/jp/api-gateway/)をご確認ください。
 
-- クラウドが提供する FaaS として、以下の3つに対応
-  - AWS Lambda
-  - Azure Functions
-  - GCP Cloud Functions
-- Funk の料金体系は、Funk 経由のリクエスト数に応じた完全な従量課金
-  - 初期費用、基本料金は不要
-- 様々なデバイス、通信プロトコルを利用してクラウドサービスの Function を直接実行
-  - 3G/LTE, LoRaWAN, Sigfox といったデバイス
-  - TCP, UDP, HTTP, SMS, USSD, LPWA 通信プロトコルに対応
+### ＜APIキー認証とは？＞
 
-より詳しく知りたい場合は[公式サイト](https://soracom.jp/services/funk/)をご確認ください。
+API Gatewayがサポートする認証方式の１つで、所定のキー(文字列)をHTTPヘッダ(x-api-keyヘッダ)に含めたリクエストであればアクセスを許可、無ければアクセスを拒否する機能です。APIキーの発行・管理は、API Gateway側で行われます。
+また、ユーザごとにAPIキーを発行し、ユーザごとに呼び出し回数に制限をかけるというような使用法も可能です。
+ただし、APIキーはヘッダー解析などをされることで漏洩する可能性がありますので、認証の唯一の手段としてAPIキーを使用することはベストプラクティスではありません。
+認証機能が必要な場合は、IAMロール、Lambdaオーソライザー、または Amazon Cognitoユーザープールを使用するようにしてください。
+https://docs.aws.amazon.com/ja_jp/apigateway/latest/developerguide/api-gateway-api-usage-plans.html
 
-## ３-1. Lambdaを作成
 
-ここでは、スマートフォンからSORACOM Funk経由で受け取った顔画像が、ステップ2で作成したRekognitionのコレクションに登録済みの人物に合致するかどうか、合致した場合は誰なのかをリターン値として返すLambdaファンクションを作成します。
+## 3-1. Lambdaを作成
+
+ここでは、スマホからAPI Gatewayを通して受け取った顔画像が、ステップ２で作成したRekognitionのコレクションに登録済みの人物とマッチするかどうか、マッチする場合は誰であるかリターン値として返すLambdaファンクションを作成します。
 
 ### 3-1-1. Lambda関数を作成する
 
 - AWSのコンソール画面で、「Lambda」を検索・選択し、[関数の作成]をクリックします。
-![3-1-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-1_1.png)
+![3-1-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-1_1.png)
 
 - 以下の項目をそれぞれ選択・入力し、[関数の作成]をクリックします。
   - 一から作成
   - 関数名： 任意の名前（例：yamada_lambda_authentication）
-  - ランタイム： `Python 3.7`
+  - ランタイム： `Python 3.8`
   - アクセス権限：[ ▼ 実行ロールの選択または作成]を開き、**「基本的なLambdaアクセス権限で新しいロールを作成」** を選択する
-![3-1-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-1_2.png)
-![3-1-1_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-1_3.png)
+![3-1-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-1_2.png)
+![3-1-1_3](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-1_3.png)
 
 「基本的なLambdaアクセス権限」を指定することで、Lambda実行時のログをCloudWatch Logsにアップロードするためのロールが自動的に付与されます。
 次のステップで、Lambdaのソースコードから使用するAWSサービスに対する必要な権限をカスタムで追加します。
@@ -90,9 +116,9 @@ SORACOM Funkは、クラウドサービスの Function を直接実行できる�
 - 関数が作成された関数の画面に遷移します。
 - 画面下部の実行ロール欄の「xxxxxxxxx-role-xxxxxxxxロールを表示」をクリックします。
 - このLambdaに紐づいたロール詳細画面が開きます。
-![3-1-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-2_1.png)
-![3-1-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-2_2.png)
-![3-1-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-2_3.png)
+![3-1-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-2_1.png)
+![3-1-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-2_2.png)
+![3-1-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-2_3.png)
 
 - ロール詳細画面の「インラインポリシーの追加」をクリック
 - Rekognitionのコレクションへのアクセスができるように、以下の権限をインラインポリシーとして追加し、任意の名前で登録しましょう
@@ -104,10 +130,12 @@ SORACOM Funkは、クラウドサービスの Function を直接実行できる�
     - リソース：[指定]を選択し、collection欄の[ARNを指定]をクリックし、それぞれ登録します
       - Region： `ap-northeast-1`
       - Account： すべてにチェック
-      - Collection Id：ステップ2-3で作成したコレクション名 (例： `yamada-authentication-collection`)
+      - Collection Id：ステップ2-3-1で作成したコレクション名 (例： `yamada-authentication-collection`)
 
-![3-1-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-2_4.png)
-![3-1-2_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-2_5.png)
+
+![3-1-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-2_4.png)
+![3-1-2_5](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-2_5.png)
+
 
 ### 3-1-3. Pythonの関数コードを作成する
     
@@ -122,7 +150,7 @@ Lambdaが実行するPythonコードを作成します。
 
 - サンプルプログラムの内容をコピーし、関数コード欄にペーストしてください
 
-- コードの15行目の以下の部分の「`{collection_id}`」を、ステップ1-6-1で作成したコレクション名（例：`yamada-authentication-collection`）に変更してください
+- コードの15行目の以下の部分の「`{collection_id}`」を、ステップ1-3-1で作成したコレクション名（例：`yamada-authentication-collection`）に変更してください
 
 ```python:変更前
   # Rekognitionで作成したコレクション名を入れてください
@@ -134,7 +162,7 @@ Lambdaが実行するPythonコードを作成します。
 ```
 
 - 右上の「保存」をクリックしてください
-![3-1-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-3_1.png)
+![3-1-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-3_1.png)
 
 #### 作成プログラムの解説
 
@@ -218,7 +246,7 @@ try文を用いるなどして、Rekognitionへのアクセスの成否を反映
 Lambdaの関数コードを保存したら、API Gatewayから渡されてくる想定のイベントデータを用意し、Lambdaに渡して、実際の動きをテストしてみましょう。
 
 - 関数画面右上の[テスト]をクリックしてください。
-![3-1-4_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-4_1.png)
+![3-1-4_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-4_1.png)
 
 - テストイベントの設定画面で以下の内容を入力して「作成」をクリックしてください。
   - 新しいテストイベントの作成：チェック
@@ -230,276 +258,372 @@ Lambdaの関数コードを保存したら、API Gatewayから渡されてくる
 
 - テストデータの内容をコピーし、テストイベントのコード欄に貼り付けてください
 
-![3-1-4_2](https://s3.amazonaws.com/docs.iot.kyoto/img/iot-handson-zybo-and-aws/step2/2-2-4_2.png)
+![3-1-4_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-4_2.png)
 
 - 作成したら、[テスト]をクリックし、実行結果を確認しましょう。関数の実行結果は、中をスクロールして見ることが可能です
-![3-1-4_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-4_3.png)
-![3-1-4_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-4_4.png)
-![3-1-4_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-4_5.png)
+![3-1-4_3](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-4_3.png)
+![3-1-4_4](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-4_4.png)
+![3-1-4_5](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-4_5.png)
 
-- テストの結果として、「statusCode:200」と「ExternalImageId」として対象者のタグが返ってきていれば成功です。
+- 今回テストとして送信した画像はコレクションに未登録の人物ですので、テストの結果として、「statusCode:200」と「FaceMatches」として空の配列が返ってきていれば成功です。
 
-## 3-2. Lambda実行用のIAMユーザーを作成する
+## 3-2. API Gatewayを作成する
 
-SORACOM Funkから作成したLambdaを使用するために、対象のLambdaの実行権限のみを持たせたIAMユーザーを作成します。
+デバイス側から作成したLambdaを使用するために、API GatewayでREST APIを作成します。
 
-ステップ3-1で作成したLambdaファンクションを実行するアクションのみを許可するポリシーをアタッチした「**[IAMユーザー](https://aws.amazon.com/jp/iam/)**」を作成します。  
-加えて、アクセスできるLambdaファンクションを指定することでアクセス権限を最小限にし、セキュリティレベルを高めます。
+### 3-2-1. APIを作成する
 
-IAMポリシーでアクセス権限を設定し、これをIAMユーザーにアタッチすることでユーザーにアクセス権限が付与されます。
+- AWSのコンソール画面で「API Gateway」を検索し、API Gatewayのコンソール画面を開きます。
+- [+APIの作成]をクリックします。
+![3-2-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-1_1.png)
 
----
+- 以下の項目をそれぞれ入力し、[APIの作成]をクリックします。
+    - プロトコルを選択する：`REST`
+    - 新しいAPIの作成： **新しいAPI**
+    - API名： 任意の名前（例：yamada-rekognition-api）
+    - エンドポイントタイプ： **リージョン**
+![3-2-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-1_2.png)
 
-### ＜IAMとは？＞
-AWS Identity and Access Management (IAM) は、AWSのサービスやリソースへのアクセスを安全に管理するためのサービスです。
-IAMを使用することで、AWSのユーザーとグループを作成および管理し、アクセス権を使用して AWSリソースへのアクセスを許可および拒否できます。
-権限管理は非常に重要な部分ですので[IAMのベストプラクティス](https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/best-practices.html)をご確認いただく事を推奨します。
+### 3-2-2. APIにリソースを追加する
 
-より詳しく知りたい場合は[公式サイト](https://aws.amazon.com/jp/iam/)をご確認ください。
+作成直後のAPIには、具体的なアクセス先のリソースが存在していない状態です。
+APIにリソースを追加し、ステップ3-1で作成したLambdaを呼び出すAPIリソースを作成します。
 
----
+- 左メニューのAPI一覧で3-2-1で作成したAPIが選択されていることを確認する
+- 「リソース」を選択する
+- `/`が選択されている状態で「アクション」をクリックし「リソースの作成」を選択する
+![3-2-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-2_1.png)
 
-### 3-2-1. AWSのコンソール画面で「IAM」を検索・選択し[ポリシー] -> [ポリシーの作成]をクリックする
-
-- AWSコンソールでIAMサービスを検索し開く
-![3-2-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-2-1_1.png)
-- ポリシーの作成をクリックする
-![3-2-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-2-1_2.png)
-
-### 3-2-2. ビジュアルエディタでサービス・アクション・リソースを設定する
-
-ビジュアルエディタもしくはJSON形式での指定により、アクセス権限を任意に作成できます。
-
-今回はビジュアルエディタで以下の設定を行います。  
-- サービス： `Lambda`
-- アクション：[書き込み]の `InvokeFunction`
-- リソース：ステップ3-1で作成したLambdaのARN
+- 新しい子リソース画面で以下の内容を入力し「リソースの作成」をクリックする
+  - プロキシリソースとして設定する：チェックなし
+  - リソース名：search
+  - リソースパス：search
+  - API Gateway CORSを有効にする：チェック
+![3-2-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-2_2.png)
 
 ---
 
-**【注意】 リソースの指定について**
-S3の「オブジェクト」とは、S3バケット内のアイテムのすべてを指します。  
-また[ARN](https://docs.aws.amazon.com/ja_jp/general/latest/gr/aws-arns-and-namespaces.html)とは*Amazon Resource Name*の略で、AWSのサービスやサービス内で作成したリソースを一意に識別するための特殊な表記のことです。  
-ARNの表記はAWSサービスによって異なります。
+#### ＜リソースとは？＞
 
-- LambdaのARNの場所  
-作成したLambdaファンクションを開いた画面の右上に記載されている値がARNとなります。
-![3-2-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-2-2_1.png)
+Amazon API Gatewayでは、API Gatewayリソースと呼ばれるプログラム可能なエンティティのコレクションとして REST API を構築できます。各 Resource エンティティは、Method リソースを 1 つ以上持つことができます。リクエストパラメーターと本文で表された Method は、クライアントが公開された Resource にアクセスするためのアプリケーションプログラミングインターフェイスを定義し、クライアントによって送信された受信リクエストを表します。
+https://docs.aws.amazon.com/ja_jp/apigateway/latest/developerguide/how-to-create-api.html
+
+#### ＜CORSとは？＞
+
+Web APIは、元来パブリックに公開されず、リソースのオリジンが共有された一つのサービスの内部機能として利用されていました。そのことから、オリジンが異なるリソースからのアクセスを受けた際、デフォルトではアクセスを拒否してしまいます。CORSを設定することで、アクセス元のリソースを意識せずに利用することができるようになります。
+https://docs.aws.amazon.com/ja_jp/apigateway/latest/developerguide/how-to-cors.html
 
 ---
 
-#### 3-2-2-1. 「ビジュアルエディタ」を選択し、サービス/アクションを入力する
+### 3-2-3. APIにメソッドを追加する
 
-- サービスでLambdaを検索し選択する
-![3-2-2-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-2-2-1_1.png)
+APIにはHTTPメソッドが必要です。
+ステップ3-1-3で作成したLambda実行コードに必要なデータをAPI経由で渡す必要があるため、レスポンスボディが使用できる`POST`にします。
 
-- アクションに「書き込み」の「InvokeFunction」を選択する
-![3-2-2-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-2-2-1_2.png)
+- リソースで「`search`」が選択されている状態で「アクション」をクリックし「メソッドの作成」を選択する
+![3-2-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-3_1.png)
 
-#### 3-2-2-2. リソースを指定する
+- メソッド欄の「OPTIONS」の下にコンボボックスが表示されるため、「POST」を選択し☑️をクリックする
 
-- リソースの「指定」を選択し[ARNの追加]をクリックする
-![3-2-2-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-2-2-2_1.png)
+### 3-2-4. APIの統合先をセットする
 
-- リージョン・ファンクション名を入力し[追加]をクリックする
-![3-2-2-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-2-2-2_2.png)
+APIメソッドを設定したら、バックエンドのエンドポイントに統合する必要があります。
+バックエンドのエンドポイントは、統合エンドポイントとも呼ばれ、Lambda関数、HTTPウェブページ、または AWSのサービスアクションとして使用できます。
+今回は、前ステップで作成したLambdaと統合しましょう。
 
-    - Region：Lambdaを作成したリージョン（例：ap-northeast-1(東京リージョン)
-    - Account：自分のAWSアカウントID(デフォルトのまま変更なし)
-    - Function name：3-1で作成したLambdaファンクションの名前（例：yamada_lambda_authentication）
+- 「/search - POST - セットアップ」画面で以下の内容を入力し「保存」をクリックする
+  - 統合タイプ：Lambda 関数  
+  - Lambda プロキシ統合の使用：チェックを入れる
+  - Lambda リージョン：`ap-northeast-1`
+  - Lambda 関数：ステップ3-1-1で作成したLambda関数を入力（例：yamada_lambda_authentication）
+  - デフォルトタイムアウトの使用：チェックを入れる
+![3-2-4_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-4_1.png)
 
-#### 3-2-2-3. 「ポリシーの確認」をクリックする
-![3-2-2-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-2-2-3_1.png)
+- [保存]をクリックすると、当該APIリソースが上で指定したLambda関数にアクセスするための権限を自動で作成するか確認されるため[OK]をクリックする
+![3-2-4_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-4_2.png)
 
-### 3-2-3. ポリシーに名前をつけて[ポリシーの作成]をクリックする
-ポリシーの確認画面で[ポリシーの作成]のクリックを忘れがちですのでご注意ください。
+#### ＜Lambdaプロキシ統合とは？＞
 
-- 名前：任意の名称（例：yamada_lambda_authentication_invoke_policy）
-- 説明：任意
+Amazon API Gateway Lambdaプロキシ統合は、単一のAPIメソッドのセットアップでAPIを構築するシンプル、強力、高速なメカニズムです。
+Lambdaプロキシ統合は、クライアントが単一のLambda関数をバックエンドで呼び出すことを可能にします。
+クライアントがAPIリクエストを送信すると、API Gatewayは、統合されたLambda関数にリクエストをそのまま渡します。
+このリクエストデータには、リクエストヘッダー、クエリ文字列パラメータ、URLパス変数、ペイロード、および API設定データが含まれます。
+バックエンドLambda関数では、受信リクエストデータを解析して、返すレスポンスを決定します。
 
-![3-2-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-2-3_1.png)
+詳細は[公式ドキュメント](https://docs.aws.amazon.com/ja_jp/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html)をご確認ください。
 
-#### 【参考】 JSON形式で記述で記述する場合は以下のようになります
+### 3-2-5. APIへのアクセスにAPIキーを必要とする設定にする
 
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "VisualEditor0",
-            "Effect": "Allow",
-            "Action": "lambda:InvokeFunction",
-            "Resource": "arn:aws:lambda:ap-northeast-1:XXXXXXXXXXXX:function:yamada_lambda_authentication"
-        }
-    ]
-}
+APIを公開すると、エンドポイントURLを知っている人は誰でもアクセス可能となります。
+今回作成するAPIには、簡易な認証機能としてAPIキーによる認証を追加しましょう。
+
+- 対象のメソッドを選択して「メソッドリクエスト」をクリックする
+- メソッドリクエスト画面の設定欄の「APIキーの必要性」を `true`に変更する
+![3-2-5_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-5_1.png)
+*OPTIONSメソッドの「APIキーの必要性」は `true`にする必要はありません。*
+
+#### ＜OPTIONSメソッドとは？＞
+
+OPTIONSメソッドは、リソース作成時にCORSを有効にすることで自動的に作成されます。
+このメソッドは、リソースに対するアクセスの際に、必ず最初に経由されます。
+これにより、受け取ったリクエストのオリジンをOPTIONSのものと置き換えることで、オリジンの違いによるアクセス拒否を回避しています。
+
+### 3-2-6. APIをデプロイする
+
+作成したAPIは、デプロイすることで外部からアクセスすることが可能となります。
+作成したAPIをデプロイしてみましょう。
+
+- 対象APIのリソース「`/`」を選択した状態で、「アクション」をクリックし「APIのデプロイ」を選択する
+![3-2-6_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-6_1.png)
+
+- 「デプロイされるステージ」で `[新しいステージ]`を選択する
+- 以下の項目を入力し「デプロイ」をクリックする
+  - ステージ名：任意のステージ名（例：prod）
+  - ステージの説明：任意
+  - デプロイメントの説明：任意
+![3-2-6_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-6_2.png)
+
+- prodステージエディターが表示されればデプロイは完了
+![3-2-6_3](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-6_3.png)
+
+ステージは、APIを公開後も安定してAPIのエンドポイントを供給しながら開発を行う上で必須の機能です。
+
+#### ＜API Gatewayのステージとは？＞
+
+ステージは、デプロイに対して名前を付けたAPIのスナップショットとなります。
+API Gatewayでは、ステージごとに別の設定やステージごとの変数を定義することが出来ます。
+また、APIにアクセスするエンドポイントURLにはステージ名が含まれますので、例えば「v1.0」「v2.0」というステージを用意して
+過去バージョンを保証したデプロイや、ステージを利用したカナリアリリースが可能となります。
+詳細は[公式サイト](https://docs.aws.amazon.com/ja_jp/apigateway/latest/developerguide/set-up-stages.html)をご確認ください。
+
+### 3-2-7. APIの使用量プランとAPIキーを作成する
+
+APIキーに対して使用量プランを設定しましょう。
+以下の説明を参考に紐付けるAPIキーでのアクセスの頻度を想定して、使用量を設定してください。
+
+---
+
+#### ＜使用量プランとは？＞
+API Gatewayでは、使用量プランに紐付けたAPIキーの利用頻度を測定・制限することが可能です。
+APIキーは使用できる回数分だけ「トークンバケット」に補給され、ここにある分だけがAPIへのアクセスに利用できます。
+ページ内項目の「スロットリング」の「レート」は1秒ごとにトークンバケットに登録されるAPIキーを、「バースト」はバケットに入るトークンの最大数を表しています。
+「クォータ」はある期間中にAPIキーが利用できる回数を示します。
+この他にも様々な方法でAPIの利用を監視・制限できます。
+詳細は[公式ドキュメント](https://docs.aws.amazon.com/ja_jp/apigateway/latest/developerguide/api-gateway-request-throttling.html)をご確認ください。
+
+---
+
+- 左のメニュー欄から「使用量プラン」を選択し「作成」をクリックする
+
+- 使用量プランの作成画面で以下のように入力し「次へ」をクリックする
+  - 名前：任意の名前（例：yamada-authentication-api-plan）
+  - 説明：任意
+  - スロットリングの有効化：チェックを入れる
+    - レート：50
+    - バースト：200
+  - クォータを有効にする：チェックを入れる
+    - クォータ：2000/ 月
+
+
+- 関連付けられたAPIステージ画面で「APIのステージの追加」をクリックする
+![3-2-7_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-7_1.png)
+
+- APIの選択ボックスで作成したAPI（例：`yamada-rekognition-api`）を選択する
+- ステージの選択ボックスで先ほどデプロイしたステージ（例：`prod`）を選択する
+- 右端の☑️をクリックする
+![3-2-7_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-7_2.png)
+
+- 「次へ」をクリックする
+![3-2-7_3](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-7_3.png)
+
+
+- 「APIキーを作成して使用量プランに追加」をクリックする
+![3-2-7_4](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-7_4.png)
+
+- APIキー画面で以下を入力し「保存」をクリックする
+  - 名前：任意の名称（例：test-user）
+  - APIキー：自動生成
+  - 説明：任意
+![3-2-7_5](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-7_5.png)
+
+- 「完了」をクリックする
+![3-2-7_6](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-7_6.png)
+
+- これで、作成した使用量プランとデプロイしたAPIのステージ、そしてAPIキーが紐づきました。
+  APIの使用量プランは、デプロイしたAPI Gatewayのステージと紐づきますので、ご注意ください。
+
+### 3-2-8. cURLでAPIをテストする
+
+APIGAtewayが正常に稼働することを確認するために、cURLの `curl`コマンドを利用して、前のステップで作成したAPIにアクセスしてみましょう。
+
+今回のケースでは、画像のBase64形式データの文字数が多く、コマンドラインでの直接入力は大変なため、shellファイルを修正してコマンドラインから実行します。
+
+- shellファイルは[こちら](https://github.com/IoTkyoto/soracom-ug-reko-handson/blob/master/sources/step3/curl_authentication_test_format.sh)の `curl_authentication_test_format.sh`をご確認ください。
+
+---
+
+#### ＜cURLとは？＞
+
+URLの書き方でファイルの送受信が行えるオープンソースのコマンドラインツールです。
+WebサイトやAPIサーバーのポート疎通確認によく利用され、HTTP/HTTPSの他にも様々なプロトコルに対応しています。コマンドラインで `curl`コマンドとして利用します。
+
+#### ＜Base64とは？＞
+
+Base64とは、データを64種類の印字可能な英数字のみを用いて、それ以外の文字を扱うことの出来ない通信環境にてマルチバイト文字やバイナリデータを扱うためのエンコード方式です。
+具体的には、A–Z, a–z, 0–9 までの62文字と、記号2つ (+, /)、さらにパディング（余った部分を詰める）のための記号として = が用いられる。
+
+---
+
+### 3-2-8-1. Shellファイルを編集する
+
+- AWSコンソールからステップ0-2で作成したCloud9を開いてください
+
+- 画面左のディレクトリツリーから「soracom-ug-reko-handson/sources/step3/curl_authentication_test_format.sh」をクリックして開いてください
+
+- 下記の解説に従い、shellファイルの中身をvim等で確認・編集してください。
+
+#### curlコマンドの解説
+
+**echoコマンドについて**
+
+- 画像データが大きいため、`echo`コマンドを利用してAPIのリクエストボディに含めたいデータを出力します
+- `echo`の引数である文字列内の`threshold`や `image_base64str`の値を書き換え、APIに投げ込むデータを適宜変更してください
+- パイプ（ `|`）はデータの受け渡しを行います。今回の場合、 `echo`が出力したデータを次のコマンド、つまり `curl`に渡します
+
+**curlコマンドについて**
+
+- `-X`でHTTPメソッド `POST`を指定します
+- 引数でAPIのURLを記述します。URLをダブルクォーテーションで囲み、 URL内の `{}`部分を下記を参考に変更してください
+	- `{api_id}` → 下記の「APIのエンドポイントの確認方法」にあるAPIのエンドポイントのうち「.execute-api.api-northeast-1.~」の前の英数字部分
+	- `{stage}` → ステップ2-2-6で作成したAPIをデプロイしたステージ名（例：prod）
+	- `{resource}` → ステップ2-2-2で作成したAPIのリソース名（例：search）
+- `-H`でヘッダーを表します
+	- ステップ2-2-7で作成したAPIキーを、 `-H "X-Api-Key: {api_key}"`という形式で記述します。下記「APIキーの確認方法」に沿って確認してください
+
+- `-d`でデータを表します。ここでは、パイプ経由で渡された値を表す `-@`を指定します
+
+**APIのエンドポイントの確認方法**
+
+AWSのコンソールで、ステップ3-2-6でデプロイしたAPIのステージを選択し、さらにリソースを選択すると、「URLの呼び出し」でAPIのリソースパスが表示されます。
+
+![3-2-8-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-8-1_1.png)
+
+**APIキーの確認方法**
+
+AWSのコンソールで、ステップ3-2-7で作成したAPIキーを[表示]します。
+
+![3-2-8-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-8-1_2.png)
+
+- 変数の入力が終わったら、ファイルを保存し、実行します
+
+- 現在コマンドラインがいるディレクトリを鑑みて、shellファイルが存在するディレクトリを正しく指定するようご注意ください。タブキーでの引数の自動補完を活用しましょう
+
+```shell:実行コマンド例
+sh curl_authentication_test_format.sh
 ```
 
-## 3-3. 作成したS3バケットにアクセスできる権限を作成(IAMユーザ編)
+- コマンドを実行すると、Lambda側で実装したレスポンスが返ってきます。
 
-ステップ3-2で作成したポリシーを、ここで作成するIAMユーザーにアタッチします。
+```shell:実行結果
+sh curl_authentication_test_format.sh
+{"msg": "[SUCCEEDED]Rekognition done", "payloads": {"timestamp": "2019-08-19 00:40:17", 
+"SearchedFaceBoundingBox": {"Width": 0.24594193696975708, "Height": 0.45506250858306885, 
+"Left": 0.21459317207336426, "Top": 0.1758822500705719}, "SearchedFaceConfidence": 99.99996185302734, 
+"FaceMatches": [{"Similarity": 97.72643280029297, "Face": {"FaceId": "xxxxxx-xxxx-xxxx-xxxx-xxxxxx", 
+"BoundingBox": {"Width": 0.40926501154899597, "Height": 0.44643399119377136, "Left": 0.2812440097332001, 
+"Top": 0.12307199835777283}, "ImageId": "xxxxxxx-xxxx-xxxx-xxxx-xxxxxx", "ExternalImageId": "Taro_Yamada", 
+"Confidence": 100.0}}], "FaceModelVersion": "4.0", "ResponseMetadata": {"RequestId": "xxxxx-xxxx-xxxx-xxxx-xxxxxx", 
+"HTTPStatusCode": 200, "HTTPHeaders": {"content-type": "application/x-amz-json-1.1", "date": "Mon, 19 Aug 2019 00:40:16 GMT", 
+"x-amzn-requestid": "xxxxxx-xxxx-xxxx-xxxx-xxxxxx", "content-length": "537", "connection": "keep-alive"}, 
+"RetryAttempts": 0}}}
+```
 
-### 3-3-1. ユーザーを追加する
+## 3-3. 【参考】 Web APIを利用するプログラム
 
-- 左のメニューからユーザーを選び[ユーザーを追加]をクリックする
-![3-3-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-3-1_1.png)
+### 3-3-1. 顔認証を行うWeb APIにアクセスするプログラムを作成する
 
+今回はWebアプリケーションは構築済みですので、参考情報としてどのようにWebアプリケーション（Vue.jsプログラム）側を実装するのかをご紹介します。
 
-### 3-3-2. ユーザーの詳細情報を入力する
+デプロイしたWebアプリケーションにはすでにAPIにアクセスするためのプログラムが組み込まれていますので、こちらの章ではコードを適宜引用しながら、APIにアクセスしている部分の解説を行います。
 
-このステップで作成するユーザーは、SORACOM FunkからLambdaファンクションにアクセスするためのユーザとなりますので、AWSコンソールへのログインは不要としプログラムによるアクセスのみ有効としましょう。
+- Webアプリケーションのリポジトリを開き、以下のファイルを開いてください
+  - https://github.com/IoTkyoto/soracom-ug-reko-handson/blob/master/webapp/src/components/SearchFacesSoracom.vue
 
-- ユーザー名：任意の名称（例：yamada_funk_lambda_user）
-- プログラムによるアクセス：チェック
-- AWSマネジメントコンソールへのアクセス：チェックなし
-![3-3-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-3-2_1.png)
+### APIアクセス用のプログラムの解説
 
-### 3-3-3. 作成したポリシーをアタッチする
+SORACOMメタデータを使用する箇所の解説は、次のステップで行いますので、こちらでは省略します。
 
-- アクセス許可の設定欄の「既存のポリシーを直接アタッチ」をクリックする
-- ステップ1-3-3で作成したポリシー（例：yamada_upload_target_image_policy）を検索しチェックを付与する
-- 「次のステップ：タグ」をクリックする
-![3-3-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-3-3_1.png)
+#### `<template></template>`タグ内の要素について
 
-### 3-3-4. [次のステップ:確認]をクリックする
-
-- 今回はタグ機能を使用しない為、タグの追加は行わずに次のステップに進んでください
-![3-3-4_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-3-4_1.png)
-
-#### ＜タグとは？＞
-タグとは、AWSリソースを整理するためのメタデータとして使用されるキーと値のペア値のことです。
-タグを使用して[リソースグループ](https://docs.aws.amazon.com/ja_jp/ARG/latest/userguide/welcome.html)を作成すると、複数のリージョンやサービスをまたいでプロジェクト別にAWSリソースを視覚化できます。
-タグを使用してAWSの請求を整理して視覚化する方法については「[コスト配分タグの使用](https://docs.aws.amazon.com/ja_jp/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html)」を参照してください。
-
-### 3-3-5. 内容を確認する
-
-- 最後の確認画面で表示されている内容に問題がなければ[ユーザーの作成]をクリックする
-![3-3-5_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-3-5_1.png)
-
-### 3-3-6. CSVファイルをダウンロードする
-
-- AWSにコマンドラインからアクセスするための認証（クレデンシャル）情報として、アクセスキーとシークレットアクセスキーが生成されます。  
-- 次のステップで利用しますので必ずダウンロードしてください。
-![3-3-6_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-3-6_1.png)
-
-## 3-4. SORACOM Funkの設定を行う
-
-SORACOMコンソールにログインし、SORACOM Funkの設定を行ったSIMグループを新しく作成し、今回使用する対象のSIMに設定します。
-
-### 3-4-1. SIMグループを作成する
-まずは、SORACOM Funkの設定を行います。
-
-- SORACOMコンソールにログインする
-![3-4-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_1.png)
-
-- 左上の「Menu」ボタンをクリックし、「SIMグループ」を選択する
-![3-4-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_2.png)
-![3-4-1_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_3.png)
-
-- 「＋追加」をクリックする
-![3-4-1_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_4.png)
-
-- グループ名を入力して「グループ作成」をクリックする（例：yamada_handson_funk）
-![3-4-1_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_5.png)
-
-- グループ設定画面で「> SORACOM Funk 設定」をクリックして開く
-![3-4-1_6](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_6.png)
-![3-4-1_7](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_7.png)
-
-- スイッチをONにし、サービスに「AWS LAmbda」、送信データ形式に「JSON」を選択する
-![3-4-1_8](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_8.png)
-
-- 認証情報で「認証情報を新規作成する...」を選択する
-![3-4-1_9](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_9.png)
-
-- 3-3-6で作成した認証情報を入力し「登録」をクリックする
-例）
-認証情報ID「yamada_aws_lambda_cert」
-概要「AWS Lambdaの認証情報」
-種別「AWS 認証情報」
-AWS Access Key ID 「3-3-6で取得したAccess Key」
-AWS Secret Access Key「3-3-6で取得したSecret Access Key」
-![3-4-1_10](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_10.png)
-
-- 関数のARNにステップ3-1で作成したLambdaのARNを入力し「保存」クリック
-![3-4-1_11](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-1_11.png)
-
-- 完了メッセージが出れば設定完了
-
-### 3-4-2. SIMにSIMグループを紐付ける
-対象となるSIMに、3−4−1で作成したSIMグループを紐付けます。
-
-- 左上の「Menu」ボタンをクリックし、「SIM管理」を選択する
-![3-4-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-2_1.png)
-
-- 対象のSIMの左端のチェクボックスにチェックをつけ、右クリックメニューから「所属グループ変更」をクリックする
-![3-4-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-2_2.png)
-
-- 新しい所属グループに先ほど3-4-1で作成したSIMグループを選択し「グループ変更」をクリックする
-![3-4-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-2_3.png)
-
-- SIM一覧画面の対象SIMのグループが3-4-1で作成したSIMグループになっていることを確認する
-![3-4-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-4-2_4.png)
-
-
-## 3-5. スマートフォンで使用するWebアプリケーションを作成する
-
-最後に、前のステップで作成したLambdaファンクションにアクセスするためのVue.jsのプログラムを作成します。
-今回は、ステップ1でデプロイしたWebアプリケーションにすでに組み込まれていますので、処理内容の解説のみを行います。
-
-- ソースコードはGithubに公開しています
-https://github.com/IoTkyoto/soracom-ug-reko-handson/blob/master/webapp/src/components/SearchFacesFunk.vue
-
-#### 作成プログラムの解説
-
-##### `<template></template>`タグ内の要素について
+- 画面のコンポーネントにはマテリアルデザインコンポーネントフレームワークの「[Vuetify](https://vuetifyjs.com/ja/)」を使用しています。
 
 - templateタグ内には、画面に表示する要素をHTMLで記述します
-- コードの26行目のTextフィールドタグ( `v-text-field`)内にある「`v-model="soracomEndPoint"`」の `v-model`は、このフォームに入力された値を " `soracomEndPoint`(SORACOMエンドポイント)" 変数値としてリアルタイムに反映・保持します
-- コードの27行目のselectタグ( `v-select`)内でも、 `v-model`を利用し" `threshold`(閾値)"の値を保持します。  
-選択可能な要素は、 `:items="[100,90,80,70,60,50,40,30,20,10]"`で指定しています
-- コードの45行目のファイルINPUTタグ( `v-file-input`)内にある「 `@change="onFileChange"`」は、ファイルが更新されたことをトリガーに実行したい関数を記述しています
-- コードの78行目のbuttonタグ( `v-btn`)内にある「 `@click="execRecognition"`」は、ボタンクリック時に実行したい関数を記述しています
 
-##### `<script></script>`タグ内の要素について
+- コードの２６行目〜２７行目のv-container内のテキストフィールドタグ( `v-textarea`)内にある「`v-model="xxxxx"`」の `v-model`は、このフィールドに入力された値をプロパティ値「`apiEndpoint`(APIのエンドポイント)」「`apiKey`(APIキー)」としてリアルタイムに反映・保持します。
 
-- 必要なライブラリのimport定義をします
+- コードの２８行目のselectタグ(`v-select`)内でも、 `v-model`を利用し「 `threshold`(閾値)」の値を保持します。
+選択可能な要素は、`:items="[10,20,30,40,50,60,70,80,90,100]"`で指定しています。
 
-```javascript
-  import axios from 'axios'; // SORACOMエンドポイントにアクセスするのに利用します"
+- コードの４６行目のinputタグ( `v-file-input`)内にある「 `@change="onFileChange"`」は、ここに要素が入力されたことをトリガーに実行したい関数を表しています。
+
+- コードの７９行目のbuttonタグ( `v-btn`)内にある「 `@click="execRekognition"`」は、ボタンクリック時に実行したい関数を表しています。
+
+#### `<script></script>`タグ内の要素について
+
+- 必要なライブラリのimport定義をします。
+  - [axios](https://github.com/axios/axios)はブラウザとnode.js用のPromiseベースのHTTPクライアントとなります。
+
+```javascript:SearchFaces.vue
+  import axios from 'axios';
 ```
 
-- SORACOMエンドポイントへのアクセスに必要なパラメータを準備する
+##### APIへのアクセスに必要なパラメータを準備する
 
 **リクエストヘッダー情報**
 
-リクエストのデータ形式を指定するため `'Content-type': 'application/json'`を設定しています。
+APIキーを、`'x-api-key': 'xxxxxxxxxxxxxxxxxxxxxxxx'`という形式で、ヘッダー情報に組み込みます。
 
-```javascript
-// ヘッダー情報を作成する
+また、やり取りするデータ形式を指定するため `'Content-type': 'application/json'`も入れましょう。
+
+`this.apiKey`で、このコンポーネントが持つ`apiKey`プロパティの値を取得できます。ここでは、コードの２７行目で画面から入力された値が最新値として代入されます。
+
+this.apiKeyには画面生成時にCofigファイル(Mixins)の値を初期値として設定しています。
+https://github.com/IoTkyoto/soracom-ug-reko-handson/blob/master/webapp/src/mixins/ConfigMixin.js
+
+
+```javascript:SearchFaces.vue
+// 画面作成時にコンポーネント内で利用する変数の初期値を設定する
+created() {
+  ・・・(省略)・・・
+  this.apiKey = this.config.searchConfig.apiKey
+  ・・・(省略)・・・
+},
+
+// ヘッダー情報を設定する
 const config = {headers: {
   'Content-Type': 'application/json',
+  'x-api-key': this.apiKey,
 }};
 ```
 
 **リクエストボディ情報**
 
-ステップ3-1で作成したLambdaファンクションに渡すデータを構築します。  
-`base64data`には、 `createImage()`関数内の `FileReader`メソッドの実行結果として画像ファイルのbase64データ（data URI scheme形式）を利用します。  
-`threshold`では、`this.threshold`で、コードの30行目で画面で選択された値を最新値として利用します。
+ステップ3-1-3で作成したLambda関数コードが想定しているパラメータデータの値を用意します。
 
-```javascript
+`base64data`には、 `createImage()`関数内の `FileReader`メソッドの実行結果として画像ファイルのbase64データ（data URI scheme形式）を利用します。
+
+`threshold`では、`this.threshold`で、コードの３１行目で画面で選択された値を最新値として利用します。
+
+```javascript:SearchFaces.vue
 // コンポーネント内で利用する変数の初期値を設定する
-data: () => ({
-  // --他のデータ定義は省略--
-  base64data: '',
-  // デフォルト値として初期値に80を設定
-  threshold: 80,
-}),
+created() {
+  ・・・(省略)・・・
+  this.threshold = this.config.searchConfig.threshold
+},
 
 // リクエストボディ情報を作成する
 const querydata = {
-  'image_base64str': this.base64data,
+  'image_base64str': this.uploadedImage,
   'threshold': this.threshold,
 };
 
@@ -509,94 +633,40 @@ createImage(file) {
   
   reader.onload = e => {
     // ここにファイルの読み込み処理(readAsDataURL())実行後の処理を記述
-    // 以下は画面表示のための要素に利用します
+    // 以下は画面表示・APIアクセスに利用します
     this.uploadedImage = e.target.result;
-    // 以下をAPIアクセスに利用します
-    this.base64data = e.target.result;
   };
   // data URI scheme形式でファイルを読み込む
   reader.readAsDataURL(file);
 },
 ```
 
-- SORACOM Funkにアクセスする
+- APIにアクセスする
 
 最後に、`axios`を利用してリクエストを投げます。
-`soracomEndpoint`では、`this.soracomEndpoint`で、コードの26行目で画面に入力された値を最新値として利用します。
+
+POSTするURLは、`this.apiEndpoint`で、コードの26行目で画面に入力された値を最新値として利用します。
+
 リクエストボディのデータは `JSON.stringify()`メソッドでJSON形式に変換しましょう。
 
-```javascript
-// コンポーネント内で利用する変数の初期値を設定する
-data: () => ({
-  // --他のデータ定義は省略--
-  soracomEndpoint: '',
-}),
-
+```javascript:SearchFaces.vue
+// API呼び出し
 axios
-// SORACOMエンドポイント、リクエストボディ、ヘッダーを引数にPOSTします
-.post(this.soracomEndpoint, JSON.stringify(querydata), config)
-// アクセス成功時の処理です
-.then(response => {
-    const faceMatches = response.data.payloads.FaceMatches;
-    if (faceMatches.length == 0) {
-      this.noTarget = '人物を特定できませんでした'
-    } else {
-      this.createAuthenticationData(faceMatches[0]);
-    }
+  .post(this.apiEndpoint, JSON.stringify(querydata), config)
+  .then(response => {
+      const faceMatches = response.data.payloads.FaceMatches;
+      if (faceMatches.length == 0) {
+        this.noTarget = '人物を特定できませんでした'
+      } else {
+        this.createAuthenticationData(faceMatches[0]);
+      }
+      this.overlay = false;
+  })
+  .catch(error => {
+    this.errorMessage = error;
     this.overlay = false;
-})
-// エラーハンドリングを実装します
-.catch(error => {
-  this.errorMessage = error;
-  this.overlay = false;
-});
+  });
 ```
 
-- 実行結果を編集する  
-  通信の実行結果を整形し画面表示用の変数に設定します
-```javascript
-/**
- * 顔認識結果編集処理
- */
-createAuthenticationData(faceMatch) {
-  this.faceMatch = faceMatch.Face.ExternalImageId;
-  this.faceMatchConf = Math.round(faceMatch.Similarity * 100) / 100 + '%';
-}
-```
-
-## 3-6. スマートフォンから顔認証を実行する
-
-それでは、実際にスマートフォンからWebアプリケーションを操作して顔認証を行ってみましょう。
-
-### 3-6-1 Webアプリケーションにアクセスする
-
-- スマートフォンのWebブラウザからデプロイしたWebアプリケーションにアクセスする
-- 「人物認識画面(SORACOM FUNK)へ」をクリックする
-![3-6-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-6-1_1.png)
-
-### 3-6-2 設定内容を確認する
-
-- 右上のアイコンをクリックし、設定内容を確認する
-  - SORACOMエンドポイント：リクエストの送信先 SORACOM Funkのエンドポイントが設定されている
-  - しきい値：Collectionの画像と何％の近似の場合に同一人物とするかのしきい値（デフォルト設定は８０％）
-![3-6-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-6-2_1.png)
-
-### 3-6-3 判定を行いたい人物の写真を撮る
-
-- [画像ファイルを選択]をクリックし、写真を撮るのか、撮影済みの画像を選択してください
-![3-6-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-6-3_1.png)
-
-### 3-6-4 人物認識を実行する
-
-- 画像のプレビューが表示されたら、[人物認識実行]をクリックしてください
-![3-6-4_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-6-4_1.png)
-
-### 3-6-5 実行結果を確認する
-
-- 画像内に、Rekognitionのコレクションに登録した人物が発見された場合、マッチした人物と信頼度が表示されます。
-- 見つからなかった場合、「認識結果」のボックスに「人物を特定できませんでした」と表示されます。
-![3-6-5_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-6-5_1.png)
-
-- また、余裕があれば、AWSのコンソールに移動し、CloudWatchでAPIへのアクセス履歴やLambdaのログを確認してみましょう。
-
-
+- ここまでの作業でWebAPIの作成は終了です
+- [トップページ](https://iotkyoto.github.io/soracom-ug-reko-handson/)に戻って次のステップに進んでください
