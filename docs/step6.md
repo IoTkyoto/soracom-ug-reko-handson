@@ -18,9 +18,10 @@
 
 - AWS Cloud9の環境を環境を削除する
 - AWS Rekognition コレクションを削除する
-- AWS Amplifyアプリケーションを削除する
 - S3バケットを削除する
+- Lambda/API Gatewayを削除する
 - IAM情報を削除する
+- SORACOM SIMグループを削除する
 
 ---
 
@@ -83,90 +84,84 @@ $ aws rekognition list-collections
 
 ※ バックグラウンドで削除処理が進み、時間が経てば削除されます
 
-## 6-2. AWS Amplifyアプリケーションを削除する
-
-AWS Amplifyアプリケーションを削除します。
-
-### 6-2-1. Amplifyサービスに移動する
-
-- 画面上部の「サービス」をクリックしてください
-- 検索窓に「ampl」と入力し、候補から「AWS Amplify」を選択してください
-![6-2-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-2-1_1.png)
-
-### 6-2-2. AWS Amplifyアプリケーションを削除する
-
-- ステップ1-3で作成したAmplifyアプリケーションをクリックする
-![6-2-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-2-2_1.png)
-
-- 右上の「アクション」メニューを開いて「アプリの削除」をクリックする
-![6-2-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-2-2_2.png)
-
-- 入力欄に「delete」を入力し「Delete」をクリックする
-![6-2-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-2-2_3.png)
-
-※ Amplifyアプリケーションが削除されます
-
-## 6-3. Amazon S3バケットを削除する
+## 6-2. Amazon S3バケットを削除する
 
 S3バケットを削除します。
 
-### 6-3-1. S3サービスに移動する
+### 6-2-1. S3サービスに移動する
 
 - 画面上部の「サービス」をクリックしてください
 - 検索窓に「s3」と入力し、候補から「S3」を選択してください
 
-### 6-3-2. Amplifyデプロイ用のS3バケットを削除する
+### 6-2-2. Collection登録用のS3バケットを削除する
 
-ステップ1-2-5で作成したデプロイファイルを格納するためのバケットを削除します。
+ステップ2-1で作成したデプロイファイルを格納するためのバケットを削除します。
 
-- バケット検索欄にステップ1-2-5で作成したバケット名の一部を入力し検索する
-![6-3-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-3-2_1.png)
+- バケット検索欄にステップ2-1で作成したバケット名の一部を入力し検索する
+![6-2-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-3-2_1.png)
 
 - 対象バケットの左側にチェックをつけ「削除」ボタンをクリックする
-例）yamada-reko-handson-deployment
-![6-3-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-3-2_2.png)
+例）yamada-rekognition-collection-source
+![6-2-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-3-2_2.png)
 
 - 削除するバケットの中にオブジェクトがあるため、最初に空にすることを求められます
 「空のバケット設定」をクリックする
-![6-3-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-3-2_3.png)
+![6-2-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-3-2_3.png)
 
 - 空にする対象のバケット名を入力して「空にする」をクリックする
-![6-3-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-3-2_4.png)
+![6-2-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-3-2_4.png)
 
 - 空になったので「バケットの削除設定」をクリックする
-![6-3-2_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-3-2_5.png)
+![6-2-2_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-3-2_5.png)
 
 - 削除するバケット名を入力して「バケットを削除」をクリックする
-![6-3-2_6](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-3-2_6.png)
+![6-2-2_6](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-3-2_6.png)
 
-- 上記と同様の手順で、ステップ2-1で作成したコレクション登録用に作成したバケットを削除してください
-（例）yamada-rekognition-collection-source
-
-## 6-4. AWS Lambdaを削除する
+## 6-3. AWS Lambdaを削除する
 
 ステップ3−1で作成したAWS Lambdaを削除します。
 
-### 6-4-1. Lambdaサービスに移動する
+### 6-3-1. Lambdaサービスに移動する
 
 - 画面上部の「サービス」をクリックしてください
 - 検索窓に「lambda」と入力し、候補から「Lambda」を選択してください
 
-### 6-4-2. AWS Lambdaを削除する
+### 6-3-2. AWS Lambdaを削除する
 
 - キーワード検索欄に3-1で作成した関数名の一部を入力し検索する
-![6-4-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-4-2_1.png)
+![6-3-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-4-2_1.png)
 
-- 対象の関数の横のチェックをつけて「アクション」メニュの「削除」をクリックする
-![6-4-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-4-2_2.png)
+- 対象の関数の横のチェックをつけて「アクション」メニューの「削除」をクリックする
+![6-3-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-4-2_2.png)
 
 - 削除確認画面で「削除」ボタンをクリックする
-![6-4-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-4-2_3.png)
+![6-3-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-4-2_3.png)
 
 ※ 削除確認画面に記載があるようにLambda削除時にはロールとログは削除されませんので、別途削除する必要があります。
 
+## 6-4. API Gatewayを削除する
+
+ステップ3-2で作成したAmazon API Gatewayを削除します。
+
+### 6-4-1. API Gatewayサービスに移動する
+
+- 画面上部の「サービス」をクリックしてください
+- 検索窓に「api」と入力し、候補から「API Gateway」を選択してください
+
+### 6-4-2. Amazon API Gatewayを削除する
+
+- キーワード検索欄に3-2で作成した関数名の一部を入力し検索する
+![6-4-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-4-2_1.png)
+
+- 対象の関数の横のチェックをつけて「Actions」メニューの「Delete」をクリックする
+![6-4-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-4-2_2.png)
+
+- 削除確認画面で「削除」ボタンをクリックする
+![6-4-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-4-2_3.png)
+
 ## 6-5. IAM情報を削除する
 
-ステップ3−1で作成したロール・ポリシー、ステップ3-2で作成したLambda実行用のIAMユーザーを削除します。
+ステップ3−1で作成したロール・ポリシーのIAM情報を削除します。
 
 
 ### 6-5-1. IAMサービスに移動する
@@ -176,7 +171,7 @@ S3バケットを削除します。
 
 ### 6-5-2. IAMユーザーを削除する
 
-- キーワード検索欄にステップ3-2で作成したユーザー名の一部を入力し検索する
+- 左メニューのキーワード検索欄にステップ3-1で作成したユーザー名の一部を入力し検索する
 ![6-5-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-5-2_1.png)
 
 - 削除対象のIAMユーザーの横にチェックをつけ「ユーザーの削除」をクリックする
