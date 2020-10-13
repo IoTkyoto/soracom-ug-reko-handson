@@ -105,7 +105,7 @@ AWSコンソールにログインし、AWS Cloud9の環境を構築します。
 
 ## 1-2. 必要なプログラム・データを取得する
 今回使用するプログラムやデータをCloud9環境に取得します
-必要なファイルは、ソースコード管理サービスの[Github](https://github.co.jp/)に保管しています。
+必要なファイルは、ソースコード管理サービスの[Github](https://github.com/IoTkyoto/soracom-ug-reko-handson)に保管しています。
 
 ### 1-2-1. ターミナルを開く
 
@@ -133,30 +133,7 @@ Resolving deltas: 100% (131/131), done.
 
 - 左側のEnvironment部分に「soracom-ug-reko-handson」ディレクトリが出来ていればClone完了です。
 
-### 1-2-5. デプロイファイルを格納するためのS3バケットを作成する
-
-- 圧縮したファイルをAWS環境に格納させるためのS3バケットを作成します
-- バケット名は任意の名前にしてください  
-（例：yamada-reko-handson-deployment）
-
-```sh
-$ aws s3 mb s3://yamada-reko-handson-deployment
-make_bucket: yamada-reko-handson-deployment
-```
-
-- 以下のコマンドを実行しS3バケットの一覧にバケットが追加されていることを確認します
-
-```sh
-$ aws s3 ls
-```
-
-### 1-2-6. S3にファイルをアップロードする
-
-- 圧縮したZipファイルをS3バケットにアップロードします
-
-```sh
-$ aws s3 cp archive.zip s3://yamada-reko-handson-deployment/
-```
+- これらのファイルは以後のステップで使用します
 
 ## 1-3. AWS CLIを動かす
 

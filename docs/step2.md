@@ -129,11 +129,11 @@ https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/dev/UsingBucket.html
 
 ![2-1-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-1-1_2.png)
 
-### 2-1-2. バケット名を入力し[次へ]をクリックする
+### 2-1-2. バケット名とリージョンを入力する
 
 - バケット名：任意の名称（例：yamada-rekognition-collection-source）
 - リージョン：アジアパシフィック（東京）
-- 既存のバケットから設定をコピー：ブランク
+- 既存のバケットから設定をコピー：何もしない
 
 ![2-1-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-1-2_1.png)
 
@@ -153,11 +153,24 @@ S3バケットの命名のガイドラインについては[バケットの制�
 今回はすべてのAWSサービスを東京リージョンで構築します。  
 リージョンが異なると、サービス間連携の遅延や他のAWSサービスと連携する上での困難等が生じることがございます。
 
-### 2-1-3. 「オプションの設定」は何も設定せずに[次へ]をクリックする
+### 2-1-3. ブロックパブリックアクセスのバケット設定は「パブリックアクセスをすべてブロック」をチェックする
 
-今回はオプションの設定は使用しませんので、何もチェックをつけずに「次へ」をクリックしてください。
+アクセス許可の設定では、S3バケットに対してアクセスできる権限を指定します。
 
+「**パブリックアクセスをすべてブロック**」にチェックが入っているかを確認してください。
+
+**【注意】 S3バケットのパブリックアクセスについて**
+
+「パブリックアクセスが有効」な状態のS3バケットは、世界中の人々に公開されている状態となります。
+
+S3バケットのパブリックアクセスが原因となった顧客情報の漏洩などの事件も発生しておりますので、アクセス権限の設定はお気をつけください。
 ![2-1-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-1-3_1.png)
+
+### 2-1-4. バケットのバージョニングは「無効にする」をチェックする
+
+今回はバケット内オブジェクトのバージョン管理は行いませんので、「無効にする」にチェックが入っているかを確認してください。
+
+![2-1-4_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-1-4_1.png)
 
 ---
 
@@ -171,36 +184,16 @@ S3バケットの命名のガイドラインについては[バケットの制�
 
 https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/dev/Versioning.html
 
-### ＜サーバーアクセスのログ記録とは？＞
-
-サーバーアクセスのログ記録をONにすると、バケットに対するリクエストの詳細が記録されます。
-
-アクセスログのレコードごとに1つのアクセスリクエストの詳細として、リクエスタ、バケット名、リクエスト時刻、リクエストアクション、レスポンスのステータス、エラーコード (存在する場合) などの情報が取り込まれます。
-
-https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/dev/ServerLogs.html
-
 ---
 
-### 2-1-4. 「アクセス許可の設定」を確認し[次へ]をクリックする
+### 2-1-5. デフォルトの暗号化は「無効にする」をチェックし、「バケットを作成」をクリックする
 
-アクセス許可の設定では、S3バケットに対してアクセスできる権限を指定します。
-
-「**パブリックアクセスをすべてブロック**」にチェックが入っているかを確認してください。
-
-**【注意】 S3バケットのパブリックアクセスについて**
-
-「パブリックアクセスが有効」な状態のS3バケットは、世界中の人々に公開されている状態となります。
-
-S3バケットのパブリックアクセスが原因となった顧客情報の漏洩などの事件も発生しておりますので、アクセス権限の設定はお気をつけください。
-![2-1-4_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-1-4_1.png)
-
-
-### 2-1-5. 確認画面に表示されている内容を確認し[バケットを作成]をクリックする
-
-バケットの作成リージョンが「アジアパシフィック（東京）」になっていることや、パブリックアクセスをブロックするようになっていることを確かめてからバケットを作成します。
+今回はバケット内オブジェクトの暗号化は行いませんので、「無効にする」にチェックが入っているかを確認してください。
 
 ![2-1-5_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-1-5_1.png)
 
+- ここまでの作業で新しいバケットが作成されます。
+バケット一覧に作成したバケットが存在していることを確認してください。
 
 ## 2-2. S3バケットに画像をアップロードする
 
@@ -209,23 +202,29 @@ S3バケットのパブリックアクセスが原因となった顧客情報の
 - アップロードの作業に移る前に、下記注意事項をご確認ください。
   - **Rekognitionで利用できる画像の制限**  
   Rekognitionに利用できる画像には制限がありますので、画像をアップロードする前にご確認ください。  
-  https://docs.aws.amazon.com/ja_jp/rekognition/latest/dg/limits.html
+  　[公式ドキュメントへのリンク](https://docs.aws.amazon.com/ja_jp/rekognition/latest/dg/limits.html)
   - **画像に写っている顔の数**  
   後述のRekognitionのコレクションへの顔の登録の性質から、画像に写っている顔は、登録したい人一人分の顔が写ったものを利用ください。
 
 ### 2-2-1. 対象のバケットを検索し選択する
 
-- バケット検索欄にステップ2-1-5で作成したバケット名の一部を入力する（例：yamada）
+- バケット一覧画面の「バケットを名前で検索」欄にステップ2-1で作成したバケット名の一部を入力する（例：yamada）
 
 - 対象のバケット名をクリックする
 
 ### 2-2-2. 対象画像をアップロードする
 
-- アップロード画面に顔認識のベースとなる画像をドロップ
+- 左上の「アップロード」ボタンをクリックする
+![2-2-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-2-2_1.png)
 
-- オプションは何も指定せずに「アップロード」をクリック
+- アップロード画面の「ファイルとフォルダをここにドラッグアンドドロップする」部分に顔認識のベースとなる画像をドロップする
+![2-2-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-2-2_2.png)
 
-- アップロードに成功した場合、画像ファイルがバケット内にリストで表示される
+- ドロップしたファイルが表示されていることを確認し「アップロード」をクリックする
+![2-2-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-2-2_3.png)
+
+- アップロードが正常に行われると、対象の画像ファイルがバケット内にリスト形式で表示される
+![2-2-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-2-2_4.png)
 
 ## 2-3. コレクションを作成する
 
@@ -253,7 +252,7 @@ $ aws rekognition create-collection --collection-id "yamada-authentication-colle
 {
     "StatusCode": 200,
     "CollectionArn": "aws:rekognition:ap-northeast-1:XXXXXXXXXXXX:collection/yamada-authentication-collection",
-    "FaceModelVersion": "4.0"
+    "FaceModelVersion": "5.0"
 }
 ```
 
@@ -268,7 +267,7 @@ $ aws rekognition list-collections
         "yamada-authentication-collection"
     ],
     "FaceModelVersions": [
-        "4.0"
+        "5.0"
     ]
 }
 ```
