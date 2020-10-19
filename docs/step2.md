@@ -275,7 +275,6 @@ $ aws rekognition list-collections
 ## 2−4. コレクションに顔を登録する
 
 前のステップで作成したコレクションに対して、以下のコマンドで対象の顔画像を登録します。
-
 ```shell:実行コマンド例
 $ aws rekognition index-faces \
       --image '{"S3Object":{"Bucket":"yamada-rekognition-collection-source","Name":"Taro_Yamada.jpg"}}' \
@@ -285,6 +284,17 @@ $ aws rekognition index-faces \
       --detection-attributes "ALL" \
       --external-image-id "Taro_Yamada" 
 ```
+
+### 2-4-1. コマンドを編集する
+
+コマンドが長いので、shellファイルを準備しています。
+Cloud9の左側ディレクトリから「/soracom-ug-reko-handson/sources/step2/rekognition_index_faces.sh」をクリックして、ファイルを開いてください。
+
+- コマンドのパラメータを下記を参考に編集し保存してください。
+    - BUCKET_NAME：ステップ2-1-2で作成したバケット名
+    - PICTUER_NAME：ステップ2-2-2でアップロードした画像名(拡張子含む)
+    - COLLECTION_ID：ステップ2-3-1で作成したコレクション名
+    - EXTERNAL_IMAGE_ID：対象者のタグ/人物名（例：Taro_Yamada）
 
 - **パラメーターの説明**
   コマンドの詳細は、[こちら](https://docs.aws.amazon.com/ja_jp/rekognition/latest/dg/add-faces-to-collection-procedure.html)の公式ドキュメントをご参考ください。
@@ -306,6 +316,12 @@ $ aws rekognition index-faces \
       - これは、登録に利用した画像データに対して、タグ付けを行う機能です。
       - 上記の `--max-faces`を `1`と指定し、画像に写っている人物名を `external-image-id`で設定することで、コレクションを利用した顔認証の際に、判定結果の人物名を取得することが可能となります。
 
+### 2-4-2. コマンドを実行する
+ファイルを保存したら、Terminal画面からシェルを実行します。
+
+```sh
+$ sh soracom-ug-reko-handson/sources/step2/rekognition_index_faces.sh
+```
 
 - コレクションに顔の登録が成功した場合は、対象の顔の特徴情報のJSONが表示されます
 
@@ -328,7 +344,9 @@ $ aws rekognition index-faces \
           ・・・
 ```
 
-- `list-faces` コマンドを実行することで、対象のコレクションに含まれる顔の一覧を確認することができます  
+
+### 2-4-3. コレクションの内容を確認する
+`list-faces` コマンドを実行することで、対象のコレクションに含まれる顔の一覧を確認することができます  
   実行時には対象のコレクションIDを指定する必要があります
 
 ```shell:実行コマンド
@@ -366,6 +384,16 @@ $ aws rekognition search-faces-by-image \
 --collection-id "yamada-authentication-collection"
 ```
 
+### 2-5-1. コマンドを編集する
+
+コマンドが長いので、shellファイルを準備しています。
+Cloud9の左側ディレクトリから「/soracom-ug-reko-handson/sources/step2/search_faces_by_image.sh」をクリックして、ファイルを開いてください。
+
+- コマンドのパラメータを下記を参考に編集し保存してください。
+    - BUCKET_NAME：ステップ2-1-2で作成したバケット名
+    - PICTUER_NAME：ステップ2-2-2でアップロードした画像名(拡張子含む)
+    - COLLECTION_ID：ステップ2-3-1で作成したコレクション名
+
 - **パラメーターの説明**  
   コマンドの詳細は、[こちら](https://docs.aws.amazon.com/ja_jp/rekognition/latest/dg/search-face-with-image-procedure.html)の公式ドキュメントをご参考ください。
 
@@ -379,6 +407,17 @@ $ aws rekognition search-faces-by-image \
 - 出力結果から、指定したS3バケット内の画像の中に顔があるかどうか、顔がコレクション内の顔とどの程度マッチするかがわかります
     -  `FaceMatches`内の要素のうち `Similarity`が、マッチ度を表し、
     -  マッチした顔は `Face`内の `ExternalImageId`で確認できます
+
+### 2-5-2. コマンドを実行する
+ファイルを保存したら、Terminal画面からシェルを実行します。
+
+```sh
+$ sh soracom-ug-reko-handson/sources/step2/search_faces_by_image.sh
+```
+
+- 以下のように実行結果が返ってきます。
+    - Similarityで合致度
+    - ExternalImageIdで人物につけたタグが表示されています
 
 ```shell:実行結果
 $ aws rekognition search-faces-by-image --image '{"S3Object":{"Bucket":"yamada-rekognition-collection-source","Name":"Taro_Yamada.jpg"}}' --collection-id yamada-authentication-collection
