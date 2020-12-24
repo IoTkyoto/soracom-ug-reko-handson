@@ -32,14 +32,14 @@ AWSコンソールにログインし、AWS Cloud9の環境を削除します。
 ### 6-1-1. Cloud9サービスに移動する
 
 - 画面上部の「サービス」をクリックし検索窓に「cloud」と入力し、候補から「Cloud9」を選択してください
-![6-1-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-1-1_1.png)
+![6-1-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-1-1_1.png)
 
 ### 6-1-2. 顔認証コレクションを削除する
 
 Cloud9環境を削除する前にステップ2-3で作成した顔認識用に作成したコレクションを削除します。
 
 - 右ペインの「＋」をクリックして「New Terminal」をクリックする
-![6-1-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-1-2_1.png)
+![6-1-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-1-2_1.png)
 
 - 以下のコマンドを実行し、コレクションの一覧を確認する
 ```shell
@@ -77,10 +77,10 @@ $ aws rekognition list-collections
 ### 6-1-3. Cloud9環境を削除する
 
 - ステップ1-1で作成したCloud9環境の右上の丸を選択し「Delete」ボタンをクリックする
-![6-1-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-1-3_1.png)
+![6-1-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-1-3_1.png)
 
 - 入力欄に「Delete」を入力し「Delete」をクリックする
-![6-1-3_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-1-3_2.png)
+![6-1-3_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-1-3_2.png)
 
 ※ バックグラウンドで削除処理が進み、時間が経てば削除されます
 
@@ -95,27 +95,27 @@ S3バケットを削除します。
 
 ### 6-2-2. Collection登録用のS3バケットを削除する
 
-ステップ2-1で作成したデプロイファイルを格納するためのバケットを削除します。
+ステップ2-1で作成したコレクションに登録する画像をアップロードするためのバケットを削除します。
 
 - バケット検索欄にステップ2-1で作成したバケット名の一部を入力し検索する
-![6-2-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-3-2_1.png)
+![6-2-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-2-2_1.png)
 
 - 対象バケットの左側にチェックをつけ「削除」ボタンをクリックする
 例）yamada-rekognition-collection-source
-![6-2-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-3-2_2.png)
+![6-2-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-2-2_2.png)
 
 - 削除するバケットの中にオブジェクトがあるため、最初に空にすることを求められます
 「空のバケット設定」をクリックする
-![6-2-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-3-2_3.png)
+![6-2-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-2-2_3.png)
 
 - 空にする対象のバケット名を入力して「空にする」をクリックする
-![6-2-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-3-2_4.png)
+![6-2-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-2-2_4.png)
 
 - 空になったので「バケットの削除設定」をクリックする
-![6-2-2_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-3-2_5.png)
+![6-2-2_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-2-2_5.png)
 
 - 削除するバケット名を入力して「バケットを削除」をクリックする
-![6-2-2_6](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-3-2_6.png)
+![6-2-2_6](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-2-2_6.png)
 
 ## 6-3. AWS Lambdaを削除する
 
@@ -129,13 +129,13 @@ S3バケットを削除します。
 ### 6-3-2. AWS Lambdaを削除する
 
 - キーワード検索欄に3-1で作成した関数名の一部を入力し検索する
-![6-3-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-4-2_1.png)
+![6-3-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-3-2_1.png)
 
 - 対象の関数の横のチェックをつけて「アクション」メニューの「削除」をクリックする
-![6-3-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-4-2_2.png)
+![6-3-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-3-2_2.png)
 
 - 削除確認画面で「削除」ボタンをクリックする
-![6-3-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-4-2_3.png)
+![6-3-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-3-2_3.png)
 
 ※ 削除確認画面に記載があるようにLambda削除時にはロールとログは削除されませんので、別途削除する必要があります。
 
@@ -172,15 +172,57 @@ S3バケットを削除します。
 ### 6-5-2. IAMユーザーを削除する
 
 - 左メニューのキーワード検索欄にステップ3-1で作成したユーザー名の一部を入力し検索する
-![6-5-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-5-2_1.png)
+![6-5-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-5-2_1.png)
 
 - 削除対象のIAMユーザーの横にチェックをつけ「ユーザーの削除」をクリックする
-![6-5-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-5-2_2.png)
+![6-5-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-5-2_2.png)
 
 - 「はい、削除します」をクリックする
-![6-5-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/4-5-2_3.png)
+![6-5-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-5-2_3.png)
 
 - 同様の手順で左メニューのロール、ポリシーでもキーワード検索で作成したポリシー・ロールを削除してください
+
+## 6-6. SORACOM SIMグループを削除する
+
+ステップ4で作成したSORACOM SIMグループを削除します。
+
+### 6-6-1. SORACOM管理コンソールにログインする
+
+- [SORACOM管理コンソール](https://console.soracom.io/#/?coverage_type=jp)にアクセスし、ログインします。
+
+### 6-6-2. SIMからグループを解除する
+
+- SORACOM管理コンソールの左上のメニューをクリックし、メニューの「SIM管理」をクリックする
+![6-6-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-6-2_1.png)
+
+- 対象のSIMのチェックボックスをONにし、画面上部の「操作」から「所属グループ変更」をクリックする
+![6-6-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-6-2_2.png)
+
+- 「新しい所属グループ」に **グループ解除** を選択し「グループ変更」をクリックする
+![6-6-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-6-2_3.png)
+
+- SIM一覧上の対象のSIMカードのグループが空白になっていることを確認する
+![6-6-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-6-2_4.png)
+
+### 6-6-3. 作成したSIMグループを削除する
+
+- SORACOM管理コンソールの左端のメニューをクリックする
+![6-6-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-6-3_1.png)
+
+- メニューのSIMグループをクリックする
+![6-6-3_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-6-3_2.png)
+
+- SIMグループの一覧から4-1-2で作成したグループをクリックする
+![6-6-3_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-6-3_3.png)
+
+- 右上の「削除」をクリックする
+![6-6-3_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-6-3_4.png)
+
+- 削除確認ウィンドウで削除対象のグループ名であることを確認し「削除」をクリックする
+![6-6-3_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-6-3_5.png)
+
+- SIMグループの一覧上から対象のグループが消えていることを確認する
+
 
 ### 以上で全てのステップが完了です
 
