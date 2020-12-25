@@ -97,15 +97,15 @@ https://docs.aws.amazon.com/ja_jp/apigateway/latest/developerguide/api-gateway-a
 ### 3-1-1. Lambda関数を作成する
 
 - AWSのコンソール画面で、「Lambda」を検索・選択し、[関数の作成]をクリックします。
-![3-1-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-1_1.png)
+![3-1-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-1_1.png)
 
 - 以下の項目をそれぞれ選択・入力し、[関数の作成]をクリックします。
   - 一から作成
   - 関数名： 任意の名前（例：yamada_lambda_authentication）
   - ランタイム： `Python 3.8`
   - アクセス権限：[ ▼ 実行ロールの選択または作成]を開き、**「基本的なLambdaアクセス権限で新しいロールを作成」** を選択する
-![3-1-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-1_2.png)
-![3-1-1_3](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-1_3.png)
+![3-1-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-1_2.png)
+![3-1-1_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-1_3.png)
 
 「基本的なLambdaアクセス権限」を指定することで、Lambda実行時のログをCloudWatch Logsにアップロードするためのロールが自動的に付与されます。
 次のステップで、Lambdaのソースコードから使用するAWSサービスに対する必要な権限をカスタムで追加します。
@@ -113,42 +113,46 @@ https://docs.aws.amazon.com/ja_jp/apigateway/latest/developerguide/api-gateway-a
 
 ### 3-1-2. Lambdaに必要な権限を付与する
 
-- 関数が作成された関数の画面に遷移します。
-- 画面下部の実行ロール欄の「xxxxxxxxx-role-xxxxxxxxロールを表示」をクリックします。
-- このLambdaに紐づいたロール詳細画面が開きます。
-![3-1-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-2_1.png)
-![3-1-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-2_2.png)
-![3-1-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-2_3.png)
+- 関数が作成された関数の画面に遷移します
+- 画面上部の「アクセス権限タブ」をクリックします
+![3-1-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-2_1n.png)
 
-- ロール詳細画面の「インラインポリシーの追加」をクリック
-- Rekognitionのコレクションへのアクセスができるように、以下の権限をインラインポリシーとして追加し、任意の名前で登録しましょう
+- 実行ロール欄のロール名のリンク「xxxxxxxxx-role-xxxxxxxx」をクリックします
+![3-1-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-2_2n.png)
+
+- このLambdaに紐づいたロール詳細画面が開きますので、「インラインポリシーの追加」をクリックします
+![3-1-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-2_3.png)
+
+- Rekognitionのコレクションへのアクセスができるように、以下の権限をインラインポリシーとして追加します
 
   - **Rekognitionのコレクションにアクセスする**
 
     - サービス： `Rekognition`
     - アクション：[読み込み] `SearchFacesByImage`
-    - リソース：[指定]を選択し、collection欄の[ARNを指定]をクリックし、それぞれ登録します
+    - リソース：[指定]を選択し、collection欄の[ARNの指定]をクリックし、それぞれ登録します
       - Region： `ap-northeast-1`
       - Account： すべてにチェック
       - Collection Id：ステップ2-3-1で作成したコレクション名 (例： `yamada-authentication-collection`)
+![3-1-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-2_4n.png)
 
+- ポリシーの名前(例： `yamada-handson-rekognition-policy`)を入力して「ポリシーの作成」をクリックします
+![3-1-2_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-2_5n.png)
 
-![3-1-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-2_4.png)
-![3-1-2_5](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-2_5.png)
-
+- 作成したポリシーが紐づいたことを確認します
+![3-1-2_6](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-2_6n.png)
 
 ### 3-1-3. Pythonの関数コードを作成する
     
 Lambdaが実行するPythonコードを作成します。
 
-- Lambdaの関数画面に戻ってください
+- Lambdaの関数画面に戻り「設定」タブを開き「関数コード」欄を表示します
+![3-1-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-3_1n.png)
 
-- 「関数コード」欄のヘッダー部の右端に「ハンドラ」として `lambda_function.lambda_handler`がデフォルトで指定されています。
-  これは、当Lambdaが呼び出された際に実行される関数が `lambda_function.py`の中の`lambda_handler`という関数だ、という意味です。
 
-- サンプルプログラムは[こちら](https://github.com/IoTkyoto/soracom-ug-reko-handson/blob/master/sources/step3/lambda_authentication.py)の `lambda_authentication.py`をご確認ください。
+- 関数コード部分にはデフォルトのコードが記載されていますので、コードを一度削除し以下のサンプルプログラムのソースをペーストしてください
+サンプルプログラムは[こちら](https://github.com/IoTkyoto/soracom-ug-reko-handson/blob/master/sources/step3/lambda_authentication.py)の `lambda_authentication.py`を使用してください
+![3-1-3_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-3_2n.png)
 
-- サンプルプログラムの内容をコピーし、関数コード欄にペーストしてください
 
 - コードの15行目の以下の部分の「`{collection_id}`」を、ステップ1-3-1で作成したコレクション名（例：`yamada-authentication-collection`）に変更してください
 
@@ -161,8 +165,8 @@ Lambdaが実行するPythonコードを作成します。
   COLLECTION_ID = 'yamada-authentication-collection'
 ```
 
-- 右上の「保存」をクリックしてください
-![3-1-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-3_1.png)
+- 右上の「デプロイ」をクリックしてください
+![3-1-3_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-3_3n.png)
 
 #### 作成プログラムの解説
 
@@ -245,8 +249,8 @@ try文を用いるなどして、Rekognitionへのアクセスの成否を反映
 
 Lambdaの関数コードを保存したら、API Gatewayから渡されてくる想定のイベントデータを用意し、Lambdaに渡して、実際の動きをテストしてみましょう。
 
-- 関数画面右上の[テスト]をクリックしてください。
-![3-1-4_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-4_1.png)
+- 関数画面右上の[テスト]をクリックしてください
+![3-1-4_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-4_1n.png)
 
 - テストイベントの設定画面で以下の内容を入力して「作成」をクリックしてください。
   - 新しいテストイベントの作成：チェック
@@ -257,13 +261,12 @@ Lambdaの関数コードを保存したら、API Gatewayから渡されてくる
 - テストデータは[こちら](https://github.com/IoTkyoto/soracom-ug-reko-handson/blob/master/sources/step3/lambda_authentication_event_example.json)の `lambda_authentication_event_example.json`をご確認ください。
 
 - テストデータの内容をコピーし、テストイベントのコード欄に貼り付けてください
-
-![3-1-4_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-4_2.png)
+![3-1-4_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-4_2.png)
 
 - 作成したら、[テスト]をクリックし、実行結果を確認しましょう。関数の実行結果は、中をスクロールして見ることが可能です
-![3-1-4_3](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-4_3.png)
-![3-1-4_4](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-4_4.png)
-![3-1-4_5](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-1-4_5.png)
+![3-1-4_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-4_3.png)
+![3-1-4_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-4_4.png)
+![3-1-4_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-1-4_5.png)
 
 - 今回テストとして送信した画像はコレクションに未登録の人物ですので、テストの結果として、「statusCode:200」と「FaceMatches」として空の配列が返ってきていれば成功です。
 
@@ -273,16 +276,18 @@ Lambdaの関数コードを保存したら、API Gatewayから渡されてくる
 
 ### 3-2-1. APIを作成する
 
-- AWSのコンソール画面で「API Gateway」を検索し、API Gatewayのコンソール画面を開きます。
-- [+APIの作成]をクリックします。
-![3-2-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-1_1.png)
+- AWSのコンソール画面で「API Gateway」を検索し、API Gatewayのコンソール画面を開きます
+- (作成済みのAPIが１つも存在しない場合)画面下部の「REST API」の「構築」をクリックします
+![3-2-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-2-1_1n.png)
+![3-2-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-2-1_2n.png)
+
+- 「新しいAPI」を選択します
+![3-2-1_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-2-1_3n.png)
 
 - 以下の項目をそれぞれ入力し、[APIの作成]をクリックします。
-    - プロトコルを選択する：`REST`
-    - 新しいAPIの作成： **新しいAPI**
     - API名： 任意の名前（例：yamada-rekognition-api）
     - エンドポイントタイプ： **リージョン**
-![3-2-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-1_2.png)
+![3-2-1_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-2-1_4n.png)
 
 ### 3-2-2. APIにリソースを追加する
 
@@ -292,14 +297,14 @@ APIにリソースを追加し、ステップ3-1で作成したLambdaを呼び�
 - 左メニューのAPI一覧で3-2-1で作成したAPIが選択されていることを確認する
 - 「リソース」を選択する
 - `/`が選択されている状態で「アクション」をクリックし「リソースの作成」を選択する
-![3-2-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-2_1.png)
+![3-2-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-2-2_1.png)
 
 - 新しい子リソース画面で以下の内容を入力し「リソースの作成」をクリックする
   - プロキシリソースとして設定する：チェックなし
   - リソース名：search
   - リソースパス：search
   - API Gateway CORSを有効にする：チェック
-![3-2-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-2_2.png)
+![3-2-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-2-2_2.png)
 
 ---
 
@@ -358,6 +363,8 @@ APIを公開すると、エンドポイントURLを知っている人は誰で�
 今回作成するAPIには、簡易な認証機能としてAPIキーによる認証を追加しましょう。
 
 - 対象のメソッドを選択して「メソッドリクエスト」をクリックする
+![3-2-5_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-2-5_1n.png)
+
 - メソッドリクエスト画面の設定欄の「APIキーの必要性」を `true`に変更する
 ![3-2-5_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-5_1.png)
 *OPTIONSメソッドの「APIキーの必要性」は `true`にする必要はありません。*
@@ -376,12 +383,12 @@ OPTIONSメソッドは、リソース作成時にCORSを有効にすることで
 - 対象APIのリソース「`/`」を選択した状態で、「アクション」をクリックし「APIのデプロイ」を選択する
 ![3-2-6_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-6_1.png)
 
-- 「デプロイされるステージ」で `[新しいステージ]`を選択する
-- 以下の項目を入力し「デプロイ」をクリックする
+- APIのデプロイウィンドウで、以下の項目を入力し「デプロイ」をクリックする
+  - デプロイされるステージ：新しいステージ
   - ステージ名：任意のステージ名（例：prod）
   - ステージの説明：任意
   - デプロイメントの説明：任意
-![3-2-6_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-6_2.png)
+![3-2-6_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-2-6_1n.png)
 
 - prodステージエディターが表示されればデプロイは完了
 ![3-2-6_3](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-6_3.png)
@@ -423,7 +430,8 @@ APIキーは使用できる回数分だけ「トークンバケット」に補�
     - バースト：200
   - クォータを有効にする：チェックを入れる
     - クォータ：2000/ 月
-
+  
+  ![3-2-7_1n](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step3/3-2-7_1n.png)
 
 - 関連付けられたAPIステージ画面で「APIのステージの追加」をクリックする
 ![3-2-7_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-7_1.png)
@@ -476,11 +484,11 @@ Base64とは、データを64種類の印字可能な英数字のみを用いて
 
 ### 3-2-8-1. Shellファイルを編集する
 
-- AWSコンソールからステップ0-2で作成したCloud9を開いてください
+- AWSコンソールからステップ1で作成したCloud9を開いてください
 
 - 画面左のディレクトリツリーから「soracom-ug-reko-handson/sources/step3/curl_authentication_test_format.sh」をクリックして開いてください
 
-- 下記の解説に従い、shellファイルの中身をvim等で確認・編集してください。
+- 下記の解説に従い、shellファイルの中身を確認・編集してください。
 
 #### curlコマンドの解説
 
@@ -495,10 +503,10 @@ Base64とは、データを64種類の印字可能な英数字のみを用いて
 - `-X`でHTTPメソッド `POST`を指定します
 - 引数でAPIのURLを記述します。URLをダブルクォーテーションで囲み、 URL内の `{}`部分を下記を参考に変更してください
 	- `{api_id}` → 下記の「APIのエンドポイントの確認方法」にあるAPIのエンドポイントのうち「.execute-api.api-northeast-1.~」の前の英数字部分
-	- `{stage}` → ステップ2-2-6で作成したAPIをデプロイしたステージ名（例：prod）
-	- `{resource}` → ステップ2-2-2で作成したAPIのリソース名（例：search）
+	- `{stage}` → ステップ3-2-6で作成したAPIをデプロイしたステージ名（例：prod）
+	- `{resource}` → ステップ3-2-2で作成したAPIのリソース名（例：search）
 - `-H`でヘッダーを表します
-	- ステップ2-2-7で作成したAPIキーを、 `-H "X-Api-Key: {api_key}"`という形式で記述します。下記「APIキーの確認方法」に沿って確認してください
+	- ステップ3-2-7で作成したAPIキーを、 `-H "X-Api-Key: {api_key}"`という形式で記述します。下記「APIキーの確認方法」に沿って確認してください
 
 - `-d`でデータを表します。ここでは、パイプ経由で渡された値を表す `-@`を指定します
 
@@ -515,11 +523,8 @@ AWSのコンソールで、ステップ3-2-7で作成したAPIキーを[表示]�
 ![3-2-8-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-8-1_2.png)
 
 - 変数の入力が終わったら、ファイルを保存し、実行します
-
-- 現在コマンドラインがいるディレクトリを鑑みて、shellファイルが存在するディレクトリを正しく指定するようご注意ください。タブキーでの引数の自動補完を活用しましょう
-
 ```shell:実行コマンド例
-sh curl_authentication_test_format.sh
+$ sh soracom-ug-reko-handson/sources/step3/curl_authentication_test_format.sh
 ```
 
 - コマンドを実行すると、Lambda側で実装したレスポンスが返ってきます。

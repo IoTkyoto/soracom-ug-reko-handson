@@ -238,17 +238,16 @@ https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/dev/Versioning.html
 
 - AWSコンソールからステップ1-1で作成したCloud9を開いてください
 - ターミナル上で以下のコマンドを実行しコレクションを作成してください  
-  コマンドの詳細は、公式ドキュメント「[コレクションの作成](https://docs.aws.amazon.com/ja_jp/rekognition/latest/dg/create-collection-procedure.html)」をご確認ください。
+- 「--collection-id」の後ろ文字列がコレクション名となりますので自由に変更してください
+- コマンドの詳細は、公式ドキュメント「[コレクションの作成](https://docs.aws.amazon.com/ja_jp/rekognition/latest/dg/create-collection-procedure.html)」をご確認ください。
 
 ```shell:実行コマンド例
-# collection-id の引数は任意のコレクション名にしてください
 $ aws rekognition create-collection --collection-id "yamada-authentication-collection"
 ```
 
 - 出力結果が以下のようにStatusCodeが200となれば、コレクションが正常に作成できています
 
 ```shell:実行結果
-$ aws rekognition create-collection --collection-id "yamada-authentication-collection"
 {
     "StatusCode": 200,
     "CollectionArn": "aws:rekognition:ap-northeast-1:XXXXXXXXXXXX:collection/yamada-authentication-collection",
@@ -262,6 +261,10 @@ $ aws rekognition create-collection --collection-id "yamada-authentication-colle
 
 ```shell:実行コマンド
 $ aws rekognition list-collections
+```
+
+- 実行結果
+```shell:実行結果
 {
     "CollectionIds": [
         "yamada-authentication-collection"
@@ -274,29 +277,23 @@ $ aws rekognition list-collections
 
 ## 2−4. コレクションに顔を登録する
 
-前のステップで作成したコレクションに対して、以下のコマンドで対象の顔画像を登録します。
-```shell:実行コマンド例
-$ aws rekognition index-faces \
-      --image '{"S3Object":{"Bucket":"yamada-rekognition-collection-source","Name":"Taro_Yamada.jpg"}}' \
-      --collection-id "yamada-authentication-collection" \
-      --max-faces 1 \
-      --quality-filter "AUTO" \
-      --detection-attributes "ALL" \
-      --external-image-id "Taro_Yamada" 
-```
+前のステップで作成したコレクションに対して、「aws rekognition index-faces」コマンドで対象の顔画像を登録します。
 
 ### 2-4-1. コマンドを編集する
 
-コマンドが長いので、shellファイルを準備しています。
+コマンドが長くなりますので、shellファイルを準備しています。  
 Cloud9の左側ディレクトリから「/soracom-ug-reko-handson/sources/step2/rekognition_index_faces.sh」をクリックして、ファイルを開いてください。
 
-- コマンドのパラメータを下記を参考に編集し保存してください。
+- **コマンド内容**
+> aws rekognition index-faces --image '{"S3Object":{"Bucket":"'${BUCKET_NAME}'","Name":"'${PICTUER_NAME}'"}}' --collection-id "${COLLECTION_ID}" --max-faces 1 --quality-filter "AUTO"  --detection-attributes "ALL" --external-image-id "${EXTERNAL_IMAGE_ID}"
+
+- 下記を参考にファイルの１〜４行目のコマンド実行パラメータを編集し保存してください。
     - BUCKET_NAME：ステップ2-1-2で作成したバケット名
     - PICTUER_NAME：ステップ2-2-2でアップロードした画像名(拡張子含む)
     - COLLECTION_ID：ステップ2-3-1で作成したコレクション名
     - EXTERNAL_IMAGE_ID：対象者のタグ/人物名（例：Taro_Yamada）
 
-- **パラメーターの説明**
+- **パラメーターの説明**  
   コマンドの詳細は、[こちら](https://docs.aws.amazon.com/ja_jp/rekognition/latest/dg/add-faces-to-collection-procedure.html)の公式ドキュメントをご参考ください。
 
   - `--image`
@@ -351,6 +348,8 @@ $ sh soracom-ug-reko-handson/sources/step2/rekognition_index_faces.sh
 
 ```shell:実行コマンド
 $aws rekognition list-faces --collection-id yamada-authentication-collection
+```
+```shell:実行結果
 {
     "Faces": [
         {
@@ -376,18 +375,15 @@ $aws rekognition list-faces --collection-id yamada-authentication-collection
 
 コレクションに登録した顔のデータと、そのデータの元となる画像を比較するため、マッチ率は100%に限りなく近い数値となります。
 
-- 以下のコマンドを実行し、指定した画像の中にコレクション内の顔と一致する顔があるか確認します
-
-```shell:実行コマンド例
-$ aws rekognition search-faces-by-image \
---image '{"S3Object":{"Bucket":"yamada-rekognition-collection-source","Name":"Taro_Yamada.jpg"}}' \
---collection-id "yamada-authentication-collection"
-```
+- 「aws rekognition search-faces-by-image」コマンドを実行し、指定した画像の中にコレクション内の顔と一致する顔があるか確認します
 
 ### 2-5-1. コマンドを編集する
 
-コマンドが長いので、shellファイルを準備しています。
+コマンドが長くなりますので、shellファイルを準備しています。  
 Cloud9の左側ディレクトリから「/soracom-ug-reko-handson/sources/step2/search_faces_by_image.sh」をクリックして、ファイルを開いてください。
+
+- **コマンド内容**
+> aws rekognition search-faces-by-image --image '{"S3Object":{"Bucket":"'${BUCKET_NAME}'","Name":"'${PICTUER_NAME}'"}}' --collection-id "${COLLECTION_ID}"
 
 - コマンドのパラメータを下記を参考に編集し保存してください。
     - BUCKET_NAME：ステップ2-1-2で作成したバケット名
@@ -420,8 +416,6 @@ $ sh soracom-ug-reko-handson/sources/step2/search_faces_by_image.sh
     - ExternalImageIdで人物につけたタグが表示されています
 
 ```shell:実行結果
-$ aws rekognition search-faces-by-image --image '{"S3Object":{"Bucket":"yamada-rekognition-collection-source","Name":"Taro_Yamada.jpg"}}' --collection-id yamada-authentication-collection
-
 {
     "SearchedFaceBoundingBox": {
         "Width": 0.40926530957221985,
@@ -447,7 +441,7 @@ $ aws rekognition search-faces-by-image --image '{"S3Object":{"Bucket":"yamada-r
             }
         }
     ],
-    "FaceModelVersion": "4.0"
+    "FaceModelVersion": "5.0"
 }
 ```
 ---
