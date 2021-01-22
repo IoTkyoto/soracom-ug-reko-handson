@@ -45,13 +45,11 @@ Cloud9環境を削除する前にステップ2-3で作成した顔認識用に�
 ```shell
 $ aws rekognition list-collections 
 {
-    "CollectionIds": [
-        "yamada-authentication-collection",
-        "yamada-authentication-collection2"
-    ],
     "FaceModelVersions": [
-        "4.0",
-        "4.0"
+        "5.0"
+    ], 
+    "CollectionIds": [
+        "yamada-authentication-collection"
     ]
 }
 ```
@@ -69,8 +67,8 @@ $ aws rekognition delete-collection --collection-id "yamada-authentication-colle
 ```shell
 $ aws rekognition list-collections 
 {
-    "CollectionIds": [],
-    "FaceModelVersions": []
+    "FaceModelVersions": [],
+    "CollectionIds": []
 }
 ```
 
@@ -98,24 +96,24 @@ S3バケットを削除します。
 ステップ2-1で作成したコレクションに登録する画像をアップロードするためのバケットを削除します。
 
 - バケット検索欄にステップ2-1で作成したバケット名の一部を入力し検索する
-![6-2-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-2-2_1.png)
+![6-2-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-2-2_1n.png)
 
 - 対象バケットの左側にチェックをつけ「削除」ボタンをクリックする
 例）yamada-rekognition-collection-source
-![6-2-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-2-2_2.png)
+![6-2-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-2-2_2n.png)
 
 - 削除するバケットの中にオブジェクトがあるため、最初に空にすることを求められます
 「空のバケット設定」をクリックする
-![6-2-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-2-2_3.png)
+![6-2-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-2-2_3n.png)
 
-- 空にする対象のバケット名を入力して「空にする」をクリックする
-![6-2-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-2-2_4.png)
+- 「完全に削除」と入力し「空にする」をクリックする
+![6-2-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-2-2_4n.png)
 
 - 空になったので「バケットの削除設定」をクリックする
-![6-2-2_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-2-2_5.png)
+![6-2-2_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-2-2_5n.png)
 
 - 削除するバケット名を入力して「バケットを削除」をクリックする
-![6-2-2_6](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-2-2_6.png)
+![6-2-2_6](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-2-2_6n.png)
 
 ## 6-3. AWS Lambdaを削除する
 
@@ -137,7 +135,7 @@ S3バケットを削除します。
 - 削除確認画面で「削除」ボタンをクリックする
 ![6-3-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-3-2_3.png)
 
-※ 削除確認画面に記載があるようにLambda削除時にはロールとログは削除されませんので、別途削除する必要があります。
+※ 削除確認画面に記載があるようにLambda削除時にはロールとログは削除されませんので、必要であれば別途削除する必要があります。
 
 ## 6-4. API Gatewayを削除する
 
@@ -161,67 +159,114 @@ S3バケットを削除します。
 
 ## 6-5. IAM情報を削除する
 
-ステップ3−1で作成したロール・ポリシーのIAM情報を削除します。
-
+ステップ3で作成したLambdaにより自動生成されたロール・ポリシーのIAM情報を削除します。
 
 ### 6-5-1. IAMサービスに移動する
 
 - 画面上部の「サービス」をクリックしてください
 - 検索窓に「iam」と入力し、候補から「IAM」を選択してください
 
-### 6-5-2. IAMユーザーを削除する
+### 6-5-2. Lambdaにより自動生成されたポリシーを削除する
 
-- 左メニューのキーワード検索欄にステップ3-1で作成したユーザー名の一部を入力し検索する
-![6-5-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-5-2_1.png)
+- 左メニューのアクセス管理欄の「ロール」をクリックしてください。
+![6-5-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-5-2_1n.png)
 
-- 削除対象のIAMユーザーの横にチェックをつけ「ユーザーの削除」をクリックする
-![6-5-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-5-2_2.png)
+- 検索窓部分に作成したLambdaの関数名の一部（名前）を入力し、対象となるLambda関数名のついたロール名をクリックしてください。
+![6-5-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-5-2_2n.png)
 
-- 「はい、削除します」をクリックする
-![6-5-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-5-2_3.png)
+- 「アクセス権限」タブ内のポリシー「AWSLambdaBasic~」の名前部分をクリックしてください。
+![6-5-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-5-2_3n.png)
 
-- 同様の手順で左メニューのロール、ポリシーでもキーワード検索で作成したポリシー・ロールを削除してください
+- 「ポリシーの削除」をクリックしてください。
+![6-5-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-5-2_4n.png)
 
-## 6-6. SORACOM SIMグループを削除する
+- 表示された画面で「削除」をクリックしてください。
+![6-5-2_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-5-2_5n.png)
+
+### 6-5-3. Lambdaにより自動生成されたロールを削除する
+
+- 左メニューのアクセス管理欄の「ロール」をクリックしてください。
+![6-5-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-5-2_1n.png)
+
+- 検索窓部分に作成したLambdaの関数名の一部（名前）を入力し、対象となるLambda関数名のついたロール名をクリックしてください。
+![6-5-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-5-2_2n.png)
+
+- 「ロールの削除」をクリックしてください。
+![6-5-2_6](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-5-2_6n.png)
+
+- 「はい、削除します」をクリックしてください。
+![6-5-2_7](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-5-2_7n.png)
+
+- 以上でLambda作成時に自動作成されたIAM情報(ロール・ポリシー)の削除は完了です。
+
+## 6-6. CloudWatch Logs情報を削除する
+
+ステップ3で作成したLambdaにより自動生成されたログ情報(CloudWatch Logs)を削除します。
+
+### 6-6-1. CloudWatchサービスに移動する
+
+- 画面上部の「サービス」をクリックしてください
+- 検索窓に「cloudwatch」と入力し、候補から「CloudWatch」を選択してください
+
+### 6-6-2. Lambdaにより自動生成されたロググループを削除する
+
+- 左側メニューの「ロググループ」をクリックしてください。
+![6-8-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-8-2_1.png)
+
+- 検索窓にLambda関数につけた名前の一部（例：yamada）を入力し、対象のロググループ(/aws/lambda/{Lambda関数名})にチェックをつけてください。
+![6-8-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-8-2_2.png)
+
+- アクションの「ロググループの削除」をクリックしてください。
+![6-8-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-8-2_3.png)
+
+- ロググループの削除画面の「削除」をクリックしてください。
+![6-8-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-8-2_4.png)
+
+- 以上で、ロググループの削除は完了です。
+
+## 6-7. SORACOM SIMグループを削除する
 
 ステップ4で作成したSORACOM SIMグループを削除します。
 
-### 6-6-1. SORACOM管理コンソールにログインする
+### 6-7-1. SORACOM管理コンソールにログインする
 
-- [SORACOM管理コンソール](https://console.soracom.io/#/?coverage_type=jp)にアクセスし、ログインします。
+- [SORACOM管理コンソール](https://console.soracom.io/#/?coverage_type=jp)にアクセスし、ログインしてください。
 
-### 6-6-2. SIMからグループを解除する
+### 6-7-2. SIMからグループを解除する
 
-- SORACOM管理コンソールの左上のメニューをクリックし、メニューの「SIM管理」をクリックする
+- SORACOM管理コンソールの左上のメニューをクリックし、メニューの「SIM管理」をクリックしてください。
 ![6-6-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-6-2_1.png)
 
-- 対象のSIMのチェックボックスをONにし、画面上部の「操作」から「所属グループ変更」をクリックする
+- 対象のSIMのチェックボックスをONにし、画面上部の「操作」から「所属グループ変更」をクリックしてください。
 ![6-6-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-6-2_2.png)
 
-- 「新しい所属グループ」に **グループ解除** を選択し「グループ変更」をクリックする
+- 「新しい所属グループ」に **グループ解除** を選択し「グループ変更」をクリックしてください。
 ![6-6-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-6-2_3.png)
 
-- SIM一覧上の対象のSIMカードのグループが空白になっていることを確認する
+- SIM一覧上の対象のSIMカードのグループが空白になっていることを確認してください。
 ![6-6-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-6-2_4.png)
 
-### 6-6-3. 作成したSIMグループを削除する
+- 必要であれば変更したSIMの速度クラスを元に戻してください。  
+設定変更時と同じ手順となりますので手順は省略します。
 
-- SORACOM管理コンソールの左端のメニューをクリックする
+### 6-7-3. 作成したSIMグループを削除する
+
+- SORACOM管理コンソールの左端のメニューをクリックしてください。
 ![6-6-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-6-3_1.png)
 
-- メニューのSIMグループをクリックする
+- メニューのSIMグループをクリックしてください。
 ![6-6-3_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-6-3_2.png)
 
-- SIMグループの一覧から4-1-2で作成したグループをクリックする
+- SIMグループの一覧から4-1-2で作成したグループをクリックしてください。
 ![6-6-3_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-6-3_3.png)
 
-- 右上の「削除」をクリックする
+- 右上の「削除」をクリックしてください。
 ![6-6-3_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-6-3_4.png)
 
-- 削除確認ウィンドウで削除対象のグループ名であることを確認し「削除」をクリックする
+- 削除確認ウィンドウで削除対象のグループ名であることを確認し「削除」をクリックしてください。
 ![6-6-3_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step6/6-6-3_5.png)
 
-- SIMグループの一覧上から対象のグループが消えていることを確認する
+- SIMグループの一覧上から対象のグループが消えていることを確認してください。
 
 
 ### 以上で全てのステップが完了です

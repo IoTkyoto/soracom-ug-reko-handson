@@ -50,7 +50,7 @@ SORACOM管理コンソールにログインし、SIMグループを作成しま�
 
 ### 4-1-1. SORACOM管理コンソールにログインする
 
-まずは、[SORACOM管理コンソール](https://console.soracom.io/#/?coverage_type=jp)にアクセスし、ログインします。
+まずは、[SORACOM管理コンソール](https://console.soracom.io/#/?coverage_type=jp)にアクセスし、ログインしてください。
 ルートアカウント、SAMユーザーのいずれでも問題ありません。
 
 - ルートアカウントログイン
@@ -63,16 +63,16 @@ SORACOM管理コンソールにログインし、SIMグループを作成しま�
 
 メタデータサービスを設定するためのSIMグループを作成します。
 
-- SORACOM管理コンソールの左端のメニューをクリックする
+- SORACOM管理コンソールの左端のメニューをクリックしてください。
 ![4-1-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-2_1.png)
 
-- メニューのSIMグループをクリックする
+- メニューのSIMグループをクリックしてください。
 ![4-1-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-2_2.png)
 
-- SIMグループ画面の「＋追加」をクリックする
+- SIMグループ画面の「＋追加」をクリックしてください。
 ![4-1-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-2_3.png)
 
-- グループ名を入力し「グループ作成」をクリックする
+- グループ名を入力し「グループ作成」をクリックしてください。
   - グループ名：任意(例：handson_metadata)
 ![4-1-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-2_4.png)
 
@@ -80,33 +80,43 @@ SORACOM管理コンソールにログインし、SIMグループを作成しま�
 
 メタデータサービスの設定を行っていきます。
 
-- 「SORACOM Air for Cellular 設定」をクリックし入力エリアを表示する
+- 「SORACOM Air for Cellular 設定」をクリックし入力エリアを表示してください。
 ![4-1-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-3_1.png)
 
-- 「メタデータサービス」のスイッチをクリックし有効化する
-- 「読み取り専用」にチェックをつける
+- 「メタデータサービス」のスイッチをクリックし有効化してください。
+- 「読み取り専用」にチェックをつけてください。
 ![4-1-3_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-3_2.png)
 
 ※ 「読み取り専用」チェックを外せば、メタデータを更新することも可能です
 
-- CORS対応で「許可するオリジン」にメタサービス呼び出し元のURLを入力する
+- CORS対応で「許可するオリジン」にメタサービス呼び出し元のURLとして下記URLを入力してください。
     - 許可するオリジン：http://soracom-ug-reko-handson.s3-website-ap-northeast-1.amazonaws.com
 ![4-1-3_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-3_3.png)
 
-- API接続情報を「ユーザーデータ」にJSON形式で入力し、「JSON形式で保存」にチェックする
-![4-1-3_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-3_4.png)
+- API接続情報を「ユーザーデータ」にJSON形式で入力し、「JSON形式で保存」にチェックしてください。
+  - JSONデータ
+    - apiEndpoint：後述の「APIのエンドポイントの確認方法」を参考に設定してください。
+    - apiKey：後述の「APIキーの確認方法」を参考に設定してください。
+    ![4-1-3_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-3_4.png)
+      ```json
+      {
+        "apiEndpoint": "https://xxxxxxxx.execute-api.ap-northeast-1.amazonaws.com/prod/search",
+        "apiKey": "xxxxxxxxxxxxxxxxxxx"
+      }
+      ```
 
-```json
-{
-  "apiEndpoint": "各自で作成したAPIエンドポイント",
-  "apiKey": "各自で作成したAPIキー"
-}
-```
+- その他の項目は変更を行わずに下方の「保存」をクリックする
+![4-1-3_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-3_5.png)
+
+- SIMグループへのメタデータの設定は以上で完了
+
 ---
 
 **APIのエンドポイントの確認方法**
 
-AWSのコンソールで、ステップ3-2-6でデプロイしたAPIのステージを選択し、さらにリソースを選択すると、「URLの呼び出し」でAPIのリソースパスが表示されます。
+AWSのコンソールで、ステップ3-2-6でデプロイしたAPIのステージを選択すると、「URLの呼び出し」の箇所にAPIのリソースパスが表示されます。
+その後ろに「リソース名（指定通りに作成した場合は「/search」）」を不可してください。
+（例：https://xxxxxxxx.execute-api.ap-northeast-1.amazonaws.com/prod/search）
 
 ![3-2-8-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/Rekognition-Handson/step2/2-2-8-1_1.png)
 
@@ -144,11 +154,6 @@ Access-Control-Allow-Origin ヘッダーに指定するドメインとなりま�
 
 ---
 
-- その他の項目は変更を行わずに下方の「保存」をクリックする
-![4-1-3_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-3_5.png)
-
-- SIMグループへのメタデータの設定は以上で完了
-
 ### 4-1-4. 対象SIMにSIMグループを割り当てる
 
 ステップ4-1-2で作成したSIMグループを、対象のSIMに割り当てます。
@@ -165,6 +170,19 @@ Access-Control-Allow-Origin ヘッダーに指定するドメインとなりま�
 - SIM一覧表示画面で対象SIMのグループに選択したSIMグループ名が表示されていれば設定は完了
 ![4-1-4_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-4_4.png)
 
+### 4-1-5. 対象SIMの速度クラスを変更する
+
+今回使用するWebアプリでは、スマートフォンから画像をWeb API経由でAWSに送信しますので、速度クラスをfast以上に設定しておくことを推奨します。
+速度が遅い場合は、タイムアウトが発生します。
+
+- 対象SIMの速度クラスの選択ボックスを開いて「s1.fast」を選択してください。
+![4-1-5_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-5_1.png)
+
+- 変更後の速度クラスが「s1.fast」になっていることを確認し「速度クラスを変更する」をクリックしてください。
+![4-1-5_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-5_2.png)
+
+- 対象SIMの速度クラスが「s1.fast」に変わっていることを確認してください。
+![4-1-5_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step4/4-1-5_3.png)
 
 ## 4-2. 【参考】メタデータサービスを利用するプログラムの作成
 

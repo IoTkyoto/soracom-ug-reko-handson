@@ -23,8 +23,8 @@
               </v-card-title>
               <v-card-text>
                 <v-container>
-                  <v-textarea v-model="apiEndpoint" label="APIエンドポイント" auto-grow rows="1" row-height="15" clearable></v-textarea>
-                  <v-textarea v-model="apiKey" label="APIキー" auto-grow rows="1" row-height="15" clearable></v-textarea>
+                  <v-textarea v-model="updateApiEndpoint" label="APIエンドポイント" auto-grow rows="1" row-height="15" clearable></v-textarea>
+                  <v-textarea v-model="updateApiKey" label="APIキー" auto-grow rows="1" row-height="15" clearable></v-textarea>
                   <v-select
                     v-model="threshold"
                     :items="[10,20,30,40,50,60,70,80,90,100]"
@@ -34,9 +34,14 @@
                 </v-container>
               </v-card-text>
               <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="warning" @click="settingDialogRecognition = false" block large><v-icon left>mdi-content-save</v-icon>保存</v-btn>
-                <v-spacer></v-spacer>
+                <v-row>
+                  <v-col>
+                    <v-btn color="warning" @click="settingCancel()" block large><v-icon left>mdi-close-box</v-icon>キャンセル</v-btn>
+                  </v-col>
+                  <v-col>
+                    <v-btn color="success" @click="settingSave()" block large><v-icon left>mdi-content-save</v-icon>保存</v-btn>
+                  </v-col>
+                </v-row>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -105,6 +110,8 @@
       settingDialogRecognition: false,
       faceMatch: false,
       faceMatchConf: null,
+      updateApiEndpoint: '',
+      updateApiKey: ''
     }),
     created() {
       // Configミックスインの情報を設定
@@ -200,6 +207,8 @@
               // SIMグループから取得したuserdataを内部変数に保存
               this.apiEndpoint = response.data.apiEndpoint;
               this.apiKey = response.data.apiKey;
+              this.updateApiEndpoint = this.apiEndpoint;
+              this.updateApiKey = this.apiKey;
             } else {
               console.log('レスポンスステータス：' + response.status);
               this.errorMessage = 'メタデータの取得に失敗しました。API接続情報を手動で入力してください。';
@@ -216,6 +225,22 @@
       createAuthenticationData(faceMatch) {
         this.faceMatch = faceMatch.Face.ExternalImageId;
         this.faceMatchConf = Math.round(faceMatch.Similarity * 100) / 100 + '%';
+      },
+      /**
+       * 設定変更保存
+       */
+      settingSave() {
+        this.apiEndpoint = this.updateApiEndpoint;
+        this.apiKey = this.updateApiKey;
+        this.settingDialogRecognition = false;
+      },
+      /**
+       * 設定変更キャンセル
+       */
+      settingCancel() {
+        this.updateApiEndpoint = this.apiEndpoint;
+        this.updateApiKey = this.apiKey;
+        this.settingDialogRecognition = false;
       }
     }
   };

@@ -125,15 +125,24 @@ https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/dev/UsingBucket.html
 
 ### 2-1-1. AWSのコンソール画面で「S3」を検索・選択し[バケットを作成する]をクリックする
 
-![2-1-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-1-1_1.png)
+- 以下のURLをクリックし、AWSのコンソール画面を表示してください。
+https://console.aws.amazon.com/console/home
 
-![2-1-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-1-1_2.png)
+- コンソール画面上部の検索欄に「S3」と入力し、表示されたサービスから「S3」をクリックしてください。
+![2-1-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-1-1_1_2.png)
+
+- バケット一覧画面から「バケットを作成」をクリックしてください。
+![2-1-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-1-1_2_2.png)
 
 ### 2-1-2. バケット名とリージョンを入力する
 
-- バケット名：任意の名称（例：yamada-rekognition-collection-source）
-- リージョン：アジアパシフィック（東京）
-- 既存のバケットから設定をコピー：何もしない
+- 一般的な設定に以下の内容を入力してください。
+    - バケット名：{名前}-rekognition-collection-source（例：yamada-rekognition-collection-source）
+    ※ バケット名が他の人と重複して作成出来ない場合は、名前の後ろに本日の日付などを付けるようにしてください。
+    - リージョン：アジアパシフィック（東京）
+    - 既存のバケットから設定をコピー：何もしない
+
+- **ここで入力したバケット名は後続処理で使用しますのでメモしておいてください。**
 
 ![2-1-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-1-2_1.png)
 
@@ -153,11 +162,11 @@ S3バケットの命名のガイドラインについては[バケットの制�
 今回はすべてのAWSサービスを東京リージョンで構築します。  
 リージョンが異なると、サービス間連携の遅延や他のAWSサービスと連携する上での困難等が生じることがございます。
 
-### 2-1-3. ブロックパブリックアクセスのバケット設定は「パブリックアクセスをすべてブロック」をチェックする
+### 2-1-3. ブロックパブリックアクセスのバケット設定の「パブリックアクセスをすべてブロック」にチェックが入っていることを確認する
 
 アクセス許可の設定では、S3バケットに対してアクセスできる権限を指定します。
 
-「**パブリックアクセスをすべてブロック**」にチェックが入っているかを確認してください。
+「**パブリックアクセスをすべてブロック**」にチェックが入っていることを確認してください。
 
 **【注意】 S3バケットのパブリックアクセスについて**
 
@@ -166,9 +175,9 @@ S3バケットの命名のガイドラインについては[バケットの制�
 S3バケットのパブリックアクセスが原因となった顧客情報の漏洩などの事件も発生しておりますので、アクセス権限の設定はお気をつけください。
 ![2-1-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-1-3_1.png)
 
-### 2-1-4. バケットのバージョニングは「無効にする」をチェックする
+### 2-1-4. バケットのバージョニングの「無効にする」にチェックが入っていることを確認する
 
-今回はバケット内オブジェクトのバージョン管理は行いませんので、「無効にする」にチェックが入っているかを確認してください。
+今回はバケット内オブジェクトのバージョン管理は行いませんので、「無効にする」にチェックが入っていることを確認してください。
 
 ![2-1-4_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-1-4_1.png)
 
@@ -186,9 +195,9 @@ https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/dev/Versioning.html
 
 ---
 
-### 2-1-5. デフォルトの暗号化は「無効にする」をチェックし、「バケットを作成」をクリックする
+### 2-1-5. デフォルトの暗号化の「無効にする」にチェックが入っていることを確認し、「バケットを作成」をクリックする
 
-今回はバケット内オブジェクトの暗号化は行いませんので、「無効にする」にチェックが入っているかを確認してください。
+今回はバケット内オブジェクトの暗号化は行いませんので、「無効にする」にチェックが入っていることを確認し、「バケットを作成」をクリックしてください。
 
 ![2-1-5_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-1-5_1.png)
 
@@ -197,48 +206,47 @@ https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/dev/Versioning.html
 
 ## 2-2. S3バケットに画像をアップロードする
 
-作成したバケットに、コレクションに登録したい人物の顔が写った画像をアップロードします。
-
-- アップロードの作業に移る前に、下記注意事項をご確認ください。
-  - **Rekognitionで利用できる画像の制限**  
-  Rekognitionに利用できる画像には制限がありますので、画像をアップロードする前にご確認ください。  
-  　[公式ドキュメントへのリンク](https://docs.aws.amazon.com/ja_jp/rekognition/latest/dg/limits.html)
-  - **画像に写っている顔の数**  
-  後述のRekognitionのコレクションへの顔の登録の性質から、画像に写っている顔は、登録したい人一人分の顔が写ったものを利用ください。
+作成したバケットに、事前準備として用意した自分の顔が写った画像をアップロードします。
+画像認識のベースとなる画像は１枚のみで問題ございません。
 
 ### 2-2-1. 対象のバケットを検索し選択する
 
-- バケット一覧画面の「バケットを名前で検索」欄にステップ2-1で作成したバケット名の一部を入力する（例：yamada）
+- バケット一覧画面の「バケットを名前で検索」欄にステップ2-1で作成したバケット名の一部を入力してください（例：yamada）
 
-- 対象のバケット名をクリックする
+- 対象のバケット名をクリックしてください。
 
 ### 2-2-2. 対象画像をアップロードする
 
-- 左上の「アップロード」ボタンをクリックする
-![2-2-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-2-2_1.png)
+- 「アップロード」ボタンをクリックしてください。
+![2-2-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-2-2_1_2.png)
 
-- アップロード画面の「ファイルとフォルダをここにドラッグアンドドロップする」部分に顔認識のベースとなる画像をドロップする
-![2-2-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-2-2_2.png)
+- アップロード画面の「ここにファイルとフォルダをここにドラッグアンドドロップする」部分に顔認識のベースとなる画像をドロップしてください。
+![2-2-2_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-2-2_2_2.png)
 
-- ドロップしたファイルが表示されていることを確認し「アップロード」をクリックする
-![2-2-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-2-2_3.png)
+- ドロップしたファイルが表示されていることを確認し、画面下部の「アップロード」をクリックしてください。
+![2-2-2_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-2-2_3_2.png)
 
-- アップロードが正常に行われると、対象の画像ファイルがバケット内にリスト形式で表示される
-![2-2-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-2-2_4.png)
+- アップロード:ステータス画面が表示されますので、画像名とステータスが「成功しました」になっていることを確認し、「終了」ボタンをクリックしてください。
+![2-2-2_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-2-2_4_2.png)
+
+- 対象の画像ファイルがバケット内にリスト形式で表示されたことを確認してください。
+![2-2-2_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step2/2-2-2_5_2.png)
+
+- **ここでアップロードした画像ファイル名は後続処理で使用しますのでメモしておいてください。**
 
 ## 2-3. コレクションを作成する
 
 顔認証サービスを利用するために、認証の対象となる顔データの登録先となるコレクションを作成します。
 
 コレクションには、 `--collection-id`パラメーターで名前をつける必要があります。
-使用目的が分かるようなコレクション名をつけましょう。  
+使用目的が分かるように「{名前}-authentication-collection」というコレクション名をつけましょう。  
 （例：yamada-authentication-collection）
 
 ### 2-3-1. コレクションを作成する
 
 - AWSコンソールからステップ1-1で作成したCloud9を開いてください
 - ターミナル上で以下のコマンドを実行しコレクションを作成してください  
-- 「--collection-id」の後ろ文字列がコレクション名となりますので自由に変更してください
+- 「--collection-id」の後ろ文字列がコレクション名となりますので各自のコレクション名に変更してください
 - コマンドの詳細は、公式ドキュメント「[コレクションの作成](https://docs.aws.amazon.com/ja_jp/rekognition/latest/dg/create-collection-procedure.html)」をご確認ください。
 
 ```shell:実行コマンド例
@@ -254,6 +262,8 @@ $ aws rekognition create-collection --collection-id "yamada-authentication-colle
     "FaceModelVersion": "5.0"
 }
 ```
+
+- **ここで作成したコレクション名は後続処理で使用しますのでメモしておいてください。**
 
 ### 2-3-2. コレクションの作成を確認する
 
@@ -282,15 +292,15 @@ $ aws rekognition list-collections
 ### 2-4-1. コマンドを編集する
 
 コマンドが長くなりますので、shellファイルを準備しています。  
-Cloud9の左側ディレクトリから「/soracom-ug-reko-handson/sources/step2/rekognition_index_faces.sh」をクリックして、ファイルを開いてください。
+Cloud9の左側ディレクトリから「/soracom-ug-reko-handson/sources/step2/rekognition_index_faces.sh」をダブルクリックして、ファイルを開いてください。
 
 - **コマンド内容**
 > aws rekognition index-faces --image '{"S3Object":{"Bucket":"'${BUCKET_NAME}'","Name":"'${PICTUER_NAME}'"}}' --collection-id "${COLLECTION_ID}" --max-faces 1 --quality-filter "AUTO"  --detection-attributes "ALL" --external-image-id "${EXTERNAL_IMAGE_ID}"
 
-- 下記を参考にファイルの１〜４行目のコマンド実行パラメータを編集し保存してください。
-    - BUCKET_NAME：ステップ2-1-2で作成したバケット名
-    - PICTUER_NAME：ステップ2-2-2でアップロードした画像名(拡張子含む)
-    - COLLECTION_ID：ステップ2-3-1で作成したコレクション名
+- 下記パラメーターの説明を参考にファイルの１〜４行目のコマンド実行パラメータを編集し保存してください。
+    - BUCKET_NAME：ステップ2-1-2で作成したバケット名（例：yamada-rekognition-collection-source）
+    - PICTUER_NAME：ステップ2-2-2でアップロードした画像名(拡張子含む)（例：yamada.jpg）
+    - COLLECTION_ID：ステップ2-3-1で作成したコレクション名（例：yamada-authentication-collection）
     - EXTERNAL_IMAGE_ID：対象者のタグ/人物名（例：Taro_Yamada）
 
 - **パラメーターの説明**  
@@ -312,9 +322,10 @@ Cloud9の左側ディレクトリから「/soracom-ug-reko-handson/sources/step2
       - オプション指定例: `external-image-id "Taro_Yamada"`
       - これは、登録に利用した画像データに対して、タグ付けを行う機能です。
       - 上記の `--max-faces`を `1`と指定し、画像に写っている人物名を `external-image-id`で設定することで、コレクションを利用した顔認証の際に、判定結果の人物名を取得することが可能となります。
+      - **external-image-idは、英数字および記号(_.\-:)しか使用することは出来ません**
 
 ### 2-4-2. コマンドを実行する
-ファイルを保存したら、Terminal画面からシェルを実行します。
+ファイルを [File] - [Save] で保存したら、Terminal画面からシェルを実行します。
 
 ```sh
 $ sh soracom-ug-reko-handson/sources/step2/rekognition_index_faces.sh
@@ -380,15 +391,15 @@ $aws rekognition list-faces --collection-id yamada-authentication-collection
 ### 2-5-1. コマンドを編集する
 
 コマンドが長くなりますので、shellファイルを準備しています。  
-Cloud9の左側ディレクトリから「/soracom-ug-reko-handson/sources/step2/search_faces_by_image.sh」をクリックして、ファイルを開いてください。
+Cloud9の左側ディレクトリから「/soracom-ug-reko-handson/sources/step2/search_faces_by_image.sh」をダブルクリックして、ファイルを開いてください。
 
 - **コマンド内容**
 > aws rekognition search-faces-by-image --image '{"S3Object":{"Bucket":"'${BUCKET_NAME}'","Name":"'${PICTUER_NAME}'"}}' --collection-id "${COLLECTION_ID}"
 
-- コマンドのパラメータを下記を参考に編集し保存してください。
-    - BUCKET_NAME：ステップ2-1-2で作成したバケット名
-    - PICTUER_NAME：ステップ2-2-2でアップロードした画像名(拡張子含む)
-    - COLLECTION_ID：ステップ2-3-1で作成したコレクション名
+- 下記パラメーターの説明を参考にファイルの１〜３行目のコマンド実行パラメータを編集し保存してください。
+    - BUCKET_NAME：ステップ2-1-2で作成したバケット名（例：yamada-rekognition-collection-source）
+    - PICTUER_NAME：ステップ2-2-2でアップロードした画像名(拡張子含む)（例：yamada.jpg）
+    - COLLECTION_ID：ステップ2-3-1で作成したコレクション名（例：yamada-authentication-collection）
 
 - **パラメーターの説明**  
   コマンドの詳細は、[こちら](https://docs.aws.amazon.com/ja_jp/rekognition/latest/dg/search-face-with-image-procedure.html)の公式ドキュメントをご参考ください。
@@ -401,8 +412,7 @@ Cloud9の左側ディレクトリから「/soracom-ug-reko-handson/sources/step2
       - 前のステップで作成したコレクション名を入力します
  
 - 出力結果から、指定したS3バケット内の画像の中に顔があるかどうか、顔がコレクション内の顔とどの程度マッチするかがわかります
-    -  `FaceMatches`内の要素のうち `Similarity`が、マッチ度を表し、
-    -  マッチした顔は `Face`内の `ExternalImageId`で確認できます
+    -  `FaceMatches`内の要素のうち `Similarity`が、マッチ度を表し、マッチした顔は `Face`内の `ExternalImageId`で確認できます
 
 ### 2-5-2. コマンドを実行する
 ファイルを保存したら、Terminal画面からシェルを実行します。
@@ -444,6 +454,10 @@ $ sh soracom-ug-reko-handson/sources/step2/search_faces_by_image.sh
     "FaceModelVersion": "5.0"
 }
 ```
+
+- 判定元と判定対象に同じ画像ファイルを使用していますので、Similarityが非常に高い数値（95%以上）の判定結果が出ていることを確認してください。
+ただし、使用した画像の鮮明ぐあいによってはSimilarityの数値は下がる可能性があります。
+
 ---
 
 ### 次のステップへ進んでください

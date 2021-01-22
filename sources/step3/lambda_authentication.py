@@ -69,21 +69,6 @@ class RecognizeFaces():
                     FaceMatchThreshold=threshold
                )
                return self.create_response(search_result)
-
-          # # 画像内に顔を認識出来ない場合
-          # except botocore.exceptions.InvalidParameterException as error:
-          #      print('[DEBUG]: {}'.format(error))
-          #      return self.make_response(421, '画像内に人物の顔を認識出来ませんでした')
-          
-          # # 画像サイズが制限オーバーの場合
-          # except botocore.exceptions.ImageTooLargeException as error:
-          #      print('[DEBUG]: {}'.format(error))
-          #      return self.make_response(422, '画像のサイズが大きすぎます（制限:15MB）')
-          
-          # # 画像フォーマットが異なる場合
-          # except botocore.exceptions.InvalidImageFormatException as error:
-          #      print('[DEBUG]: {}'.format(error))
-          #      return self.make_response(423, '画像のフォーマットが異なります（制限:PNGあるいはJPEG形式）')
           
           # その他エラーに対処
           except Exception as error:

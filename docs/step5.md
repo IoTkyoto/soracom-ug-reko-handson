@@ -28,7 +28,10 @@ SORACOM回線での接続が可能なパソコンからでも実施すること�
 
 各自のスマートフォンのブラウザを立ち上げて顔認識Webアプリケーションにアクセスしてください。
 
-- 以下のURLにブラウザでアクセスするか、QRコードをカメラで読み取り対象のWebアプリケーションを開いてください
+- 事前準備としても記載しておりますが、操作するスマートフォンにSORACOM Air SIMがセットアップされ、WifiがOFFの状態でインターネットに接続可能（Google等のサイトが閲覧可能）であることを確認してください。
+以降の作業はSORACOM SIM経由の通信でしか動かすことが出来ませんので、WifiをOFFの状態で作業してください。
+
+- 以下のURLにブラウザでアクセスするか、QRコードをカメラで読み取り、対象のWebアプリケーションを開いてください。
   - URL：http://soracom-ug-reko-handson.s3-website-ap-northeast-1.amazonaws.com/
 ![QRコード](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step5/qrcode.png)
 
@@ -68,7 +71,7 @@ SORACOM管理コンソールにログインし、以下のことを確認して�
 ![5-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step5/5-3_1.png)
 
 - 表示されたAPIエンドポイントとAPIキーがメタデータサービスに設定した内容で同じであることを確認する
-![5-3_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step5/5-3_2.png)
+![5-3_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step5/5-3-2n.png)
 
 #### APIエンドポイントとAPIキーが正しく表示されない場合
 

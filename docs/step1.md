@@ -61,6 +61,7 @@ AWSコマンドラインインターフェースの略で、AWSサービスを�
 - 使い方やリファレンスは以下を参照
   - [AWSコマンドラインインターフェースのユーザーガイド](https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-chap-welcome.html)
   - [AWS CLIコマンドリファレンス](https://docs.aws.amazon.com/cli/latest/reference/)
+- AWS CLI には 「バージョン 1.x」「バージョン 2.x」の 2 つのバージョンがある（2021年2月時点のCloud9(AmazonLinux2)には AWS CLI version1.x がデフォルトでインストールされているため、今回のハンズオンコンテンツは AWS CLI version1.x での実行となります）
 
 より詳しく知りたい場合は[公式サイト](https://aws.amazon.com/jp/cli/)をご確認ください。
 
@@ -93,15 +94,18 @@ AWSコンソールにログインし、AWS Cloud9の環境を構築します。
 例）yamada-handson-env
 ![1-1-3_3](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-1-3_3.png)
 
-- 設定内容はすべてデフォルトのまま画面下部の [Next step] をクリックしてください
-![1-1-3_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-1-3_4.png)
-![1-1-3_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-1-3_5.png)
+- 設定内容に以下の設定を行い、画面下部の [Next step] をクリックしてください
+  - Environment type：Create a new EC2 instance for environment (direct access)
+  - Instance type：t2.micro (1 GiB RAM + 1 vCPU)
+  - Platform：Amazon Linux 2 (recommended)
+  - Cost-saving setting：After 30 minutes(default)
+![1-1-3_4](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-1-3_4_2.png)
+![1-1-3_5](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-1-3_5_2.png)
 
 - 設定内容確認画面で [create environment] をクリックしてください
-![1-1-3_6](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-1-3_6.png)
-![1-1-3_7](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-1-3_7.png)
+![1-1-3_6](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-1-3_6_2.png)
 
-※ 新しいタブが開き、Cloud9 IDEのCreate処理が行われますので、環境が立ち上がるまでしばらくお待ちください
+※ 新しいタブが開き、Cloud9 IDEのCreate処理が行われますので、環境が立ち上がるまでしばらくお待ちください(２〜３分程度かかります)
 
 ## 1-2. 必要なプログラム・データを取得する
 今回使用するプログラムやデータをCloud9環境に取得します
@@ -110,18 +114,22 @@ AWSコンソールにログインし、AWS Cloud9の環境を構築します。
 ### 1-2-1. ターミナルを開く
 
 - Cloud9 IDE の画面を表示してください
-![1-2-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-2-1_1.png)
+![1-2-1_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-2-1_2_2.png)
 
-- Welcomeページを閉じて、新しくターミナルを開いてください
-![1-2-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-2-1_2.png)
+- 「＋」をクリックして、新しくターミナルを開いてください
+![1-2-1_2](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-2-1_1_2.png)
 
 ### 1-2-2. Githubからファイル一式をCloneする
 
 - ターミナルで以下のコマンドを実行し、Githubからソースコードを取得する
+※ ブラウザの設定によってはコマンド文字列をペーストする際にダイアログが表示される可能性があります
 
 ```sh
 $ git clone https://github.com/IoTkyoto/soracom-ug-reko-handson
+```
 
+- コマンドの実行結果が表示される
+```sh
 Cloning into 'soracom-ug-reko-handson'...
 remote: Enumerating objects: 369, done.
 remote: Counting objects: 100% (369/369), done.
@@ -132,6 +140,7 @@ Resolving deltas: 100% (131/131), done.
 ```
 
 - 左側のEnvironment部分に「soracom-ug-reko-handson」ディレクトリが出来ていればClone完了です。
+![1-2-2_1](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/step1/1-2-2_1.png)
 
 - これらのファイルは以後のステップで使用します
 
@@ -139,15 +148,20 @@ Resolving deltas: 100% (131/131), done.
 
 ステップ２で使用するため、Cloud9でAWS CLIが動くことを確認します。
 
-### 1-3-1. S3バケットの一覧を取得する
+### 1-3-1. AWS CLIのバージョンを表示する
 
-- ターミナルから以下のコマンドを実行しS3バケットの一覧を取得してください
+- ターミナルから以下のコマンドを実行してください
 
 ```sh
-$ aws s3 ls
+$ aws --version
 ```
 
-- エラーとならずにアカウントに存在しているS3バケットの一覧が表示されればAWS CLIは使用可能状態です。
+- エラーとならずに、AWS CLIのバージョンが表示されれば、AWS CLIは使用可能状態です。
+
+```sh
+aws-cli/1.18.212 Python/2.7.18 Linux/4.14.209-160.339.amzn2.x86_64 botocore/1.19.52
+```
+※ 上記各バージョン表記は一例となります。時期によってバージョンは変更されますので注意ください。
 
 ### 次のステップへ進んでください
 
