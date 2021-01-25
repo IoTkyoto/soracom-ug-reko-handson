@@ -1,3 +1,8 @@
+---
+layout: default
+title: SORACOM回線を使ったスマートフォンとAWSサービスを用いた画像認識サービスを構築する
+---
+
 # SORACOM回線を使ったスマートフォンとAWSサービスを用いた画像認識サービスを構築する
 
 # はじめに
@@ -113,7 +118,7 @@ AWSのCLI(コマンド・ライン・インターフェース)ツールを使っ
 
 # ステップ3. 顔認識のWeb APIを作成する
 
-ステップ３では、パラメータとして受け取った画像を分析し「事前登録済みの人物が写っているかを判定し、写っている場合は誰なのかを判定する」という機能を持ったWeb APIを作成し、デバイス側からAPIを呼び出す仕組みを構築します。
+ステップ3では、パラメータとして受け取った画像を分析し「事前登録済みの人物が写っているかを判定し、写っている場合は誰なのかを判定する」という機能を持ったWeb APIを作成し、デバイス側からAPIを呼び出す仕組みを構築します。
 
 まずは、AWSの[FaaS](https://www.redhat.com/ja/topics/cloud-native-apps/what-is-faas)サービスである「[AWS Lambda](https://aws.amazon.com/jp/lambda/)」で関数を作成し、フルマネージド型API管理サービスの「[Amazon API Gateway](https://aws.amazon.com/jp/api-gateway/)」で[REST API](https://www.redhat.com/ja/topics/api/what-is-a-rest-api)を作成します。
 
@@ -121,34 +126,34 @@ AWSのCLI(コマンド・ライン・インターフェース)ツールを使っ
 [ステップ３へ](https://iotkyoto.github.io/soracom-ug-reko-handson/step3)
 
 
-# ステップ４. SORACOMメタデータサービスの設定を行う
+# ステップ4. SORACOMメタデータサービスの設定を行う
 
-ステップ４では、対象のSIMに[メタデータサービス](https://dev.soracom.io/jp/start/metadata/)の設定を行い、デバイス側からメタデータサービスを利用する仕組みを構築します。
+ステップ4では、対象のSIMに[メタデータサービス](https://dev.soracom.io/jp/start/metadata/)の設定を行い、デバイス側からメタデータサービスを利用する仕組みを構築します。
 
 メタデータサービスの設定は、SORACOM管理コンソールから設定することが可能です。
 まずは、SIMグループを作成しメタデータサービスの有効化を行い、対象のSIMに作成したSIMグループを割り当てます。
 
 **以下のコンテンツを開き、ステップ４を進めてください**  
-[ステップ４へ](https://iotkyoto.github.io/soracom-ug-reko-handson/step4)
+[ステップ4へ](https://iotkyoto.github.io/soracom-ug-reko-handson/step4)
 
 
-# ステップ５. スマートフォンから顔認識を行う
+# ステップ5. スマートフォンから顔認識を行う
 
-ステップ５では、SORACOM回線での接続が可能なスマートフォンを使い、スマートフォンのカメラで撮影した画像で顔認識を行ってみましょう。
+ステップ5では、SORACOM回線での接続が可能なスマートフォンを使い、スマートフォンのカメラで撮影した画像で顔認識を行ってみましょう。
 SORACOM回線での接続が可能なパソコンからでも実施することが出来ます。
 
 **以下のコンテンツを開き、ステップ５を進めてください**  
-[ステップ５へ](https://iotkyoto.github.io/soracom-ug-reko-handson/step5)
+[ステップ5へ](https://iotkyoto.github.io/soracom-ug-reko-handson/step5)
 
 
-# ステップ６. ハンズオン終了後のあと片づけ
+# ステップ6. ハンズオン終了後のあと片づけ
 
 ご利用いただいたAWSの各種サービスには無料利用枠がございますが、無料利用枠を超えた場合は従量課金が発生します。
 
 ハンズオンを行い、環境が不要となれば各種リソースを削除することを推奨します。
 
 **以下のコンテンツを開き、ステップ６を進めてください**  
-[ステップ６へ](https://iotkyoto.github.io/soracom-ug-reko-handson/step6)
+[ステップ6へ](https://iotkyoto.github.io/soracom-ug-reko-handson/step6)
 
 # さいごに
 
