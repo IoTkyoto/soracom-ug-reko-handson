@@ -1,12 +1,17 @@
-# ステップ４. SORACOMメタデータサービスの設定を行う（SORACOM回線を使ったスマートフォンとAWSサービスを用いた画像認識サービスを構築する）
+---
+layout: default
+title: ステップ4. SORACOMメタデータサービスの設定を行う
+---
+
+# ステップ4. SORACOMメタデータサービスの設定を行う（SORACOM回線を使ったスマートフォンとAWSサービスを用いた画像認識サービスを構築する）
 
 *当コンテンツは、エッジデバイスとしてスマートフォン、クラウドサービスとしてAWSを利用し、エッジデバイスとクラウド間とのデータ連携とAWSサービスを利用した画像認識を体験し、IoT/画像認識システムの基礎的な技術の習得を目指す方向けのハンズオン(体験学習)コンテンツ「[SORACOM回線を使ったスマートフォンとAWSサービスを用いた画像認識サービスを構築する](https://iotkyoto.github.io/soracom-ug-reko-handson/)」の一部です。*
 
-# ステップ４. SORACOMメタデータサービスの設定を行う
+# ステップ4. SORACOMメタデータサービスの設定を行う
 
-![ステップ４アーキテクチャ図](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/architecture_step4.png)
+![ステップ4アーキテクチャ図](https://s3.amazonaws.com/docs.iot.kyoto/img/SoracomUG-Reko-Handson/architecture_step4.png)
 
-ステップ４では、対象のSIMに[メタデータサービス](https://dev.soracom.io/jp/start/metadata/)の設定を行い、デバイス側からメタデータサービスを利用する仕組みを構築します。
+ステップ4では、対象のSIMに[メタデータサービス](https://dev.soracom.io/jp/start/metadata/)の設定を行い、デバイス側からメタデータサービスを利用する仕組みを構築します。
 
 メタデータサービスの設定は、SORACOM管理コンソールから設定することが可能です。
 まずは、SIMグループを作成しメタデータサービスの有効化を行い、対象のSIMに作成したSIMグループを割り当てます。

@@ -1,3 +1,8 @@
+---
+layout: default
+title: SORACOM回線を使ったスマートフォンとAWSサービスを用いた画像認識サービスを構築する
+---
+
 # SORACOM回線を使ったスマートフォンとAWSサービスを用いた画像認識サービスを構築する
 
 # はじめに
@@ -11,6 +16,10 @@ SIMグループの情報はAPIを実行する際にSIM経由のメタデータ�
 
 WebAPIの認証キーをWebサイトに埋め込む必要はなく、SIM経由でしか認証キーを取得出来ない仕組みとすることで、高いセキュリティが実現出来ます。
 また、使用するAPIをSIMごとに切り替えることが可能となりますので、開発用SIM・本番用SIMで異なる環境へのアクセスや、利用者の権限ごとに異なる情報を取得するなど、様々な応用が可能となります。
+
+### 応用例
+
+本ハンズオンで学んだ内容は「来訪者の自動受け付け機」といった事に利用が可能となっています。
 
 ## 全体のアーキテクチャ
 
@@ -52,6 +61,27 @@ WebAPIの認証キーをWebサイトに埋め込む必要はなく、SIM経由�
 - AWSコンソールヘのログインや一般的な操作が可能であること
 - 基本的なLinuxコマンドライン操作ができること
 - ローカルPCのWebブラウザとして「Chrome」が利用可能であること
+
+### 本ハンズオンでかかるサービス費用
+
+計: 約1,273円 (この内無料分があるため実際はこれよりも少なくなります。)
+
+- AWS: 約386円
+  - AWS Cloud 9(約3時間): 約380円 ※
+  - Amazon Rekognition (約20枚の画像): 約3円 ※
+  - Amazon S3 (約20枚の画像分): 1円未満
+  - AWS Lambda: 1円未満 ※
+  - Amazon API Gateway: 1円未満 ※
+- SORACOM: 887円
+  - SORACOM Air
+    - SORACOM 特定地域向け IoT SIM (plan-D データ通信のみ nanoSIM): 852円
+    - 基本料: 10円/日
+    - データ通信 (上下50MBづつ): 25円 ※
+
+料金は全て税別・送料別です。  
+スマートフォンやPCといった機器は除外しています。  
+※が付いているサービスは無料枠が存在します。各サービスの料金ページをご覧ください。  
+それぞれのサービスはオンラインで見積もりが可能です。[AWS 料金計算ツール](https://docs.aws.amazon.com/ja_jp/pricing-calculator/latest/userguide/getting-started.html) / [SOARCOM 料金見積もりツール](https://soracom.jp/calculator/)
 
 ## ハンズオンの事前準備
 
@@ -113,7 +143,7 @@ AWSのCLI(コマンド・ライン・インターフェース)ツールを使っ
 
 # ステップ3. 顔認識のWeb APIを作成する
 
-ステップ３では、パラメータとして受け取った画像を分析し「事前登録済みの人物が写っているかを判定し、写っている場合は誰なのかを判定する」という機能を持ったWeb APIを作成し、デバイス側からAPIを呼び出す仕組みを構築します。
+ステップ3では、パラメータとして受け取った画像を分析し「事前登録済みの人物が写っているかを判定し、写っている場合は誰なのかを判定する」という機能を持ったWeb APIを作成し、デバイス側からAPIを呼び出す仕組みを構築します。
 
 まずは、AWSの[FaaS](https://www.redhat.com/ja/topics/cloud-native-apps/what-is-faas)サービスである「[AWS Lambda](https://aws.amazon.com/jp/lambda/)」で関数を作成し、フルマネージド型API管理サービスの「[Amazon API Gateway](https://aws.amazon.com/jp/api-gateway/)」で[REST API](https://www.redhat.com/ja/topics/api/what-is-a-rest-api)を作成します。
 
@@ -121,34 +151,34 @@ AWSのCLI(コマンド・ライン・インターフェース)ツールを使っ
 [ステップ３へ](https://iotkyoto.github.io/soracom-ug-reko-handson/step3)
 
 
-# ステップ４. SORACOMメタデータサービスの設定を行う
+# ステップ4. SORACOMメタデータサービスの設定を行う
 
-ステップ４では、対象のSIMに[メタデータサービス](https://dev.soracom.io/jp/start/metadata/)の設定を行い、デバイス側からメタデータサービスを利用する仕組みを構築します。
+ステップ4では、対象のSIMに[メタデータサービス](https://dev.soracom.io/jp/start/metadata/)の設定を行い、デバイス側からメタデータサービスを利用する仕組みを構築します。
 
 メタデータサービスの設定は、SORACOM管理コンソールから設定することが可能です。
 まずは、SIMグループを作成しメタデータサービスの有効化を行い、対象のSIMに作成したSIMグループを割り当てます。
 
 **以下のコンテンツを開き、ステップ４を進めてください**  
-[ステップ４へ](https://iotkyoto.github.io/soracom-ug-reko-handson/step4)
+[ステップ4へ](https://iotkyoto.github.io/soracom-ug-reko-handson/step4)
 
 
-# ステップ５. スマートフォンから顔認識を行う
+# ステップ5. スマートフォンから顔認識を行う
 
-ステップ５では、SORACOM回線での接続が可能なスマートフォンを使い、スマートフォンのカメラで撮影した画像で顔認識を行ってみましょう。
+ステップ5では、SORACOM回線での接続が可能なスマートフォンを使い、スマートフォンのカメラで撮影した画像で顔認識を行ってみましょう。
 SORACOM回線での接続が可能なパソコンからでも実施することが出来ます。
 
 **以下のコンテンツを開き、ステップ５を進めてください**  
-[ステップ５へ](https://iotkyoto.github.io/soracom-ug-reko-handson/step5)
+[ステップ5へ](https://iotkyoto.github.io/soracom-ug-reko-handson/step5)
 
 
-# ステップ６. ハンズオン終了後のあと片づけ
+# ステップ6. ハンズオン終了後のあと片づけ
 
 ご利用いただいたAWSの各種サービスには無料利用枠がございますが、無料利用枠を超えた場合は従量課金が発生します。
 
 ハンズオンを行い、環境が不要となれば各種リソースを削除することを推奨します。
 
 **以下のコンテンツを開き、ステップ６を進めてください**  
-[ステップ６へ](https://iotkyoto.github.io/soracom-ug-reko-handson/step6)
+[ステップ6へ](https://iotkyoto.github.io/soracom-ug-reko-handson/step6)
 
 # さいごに
 
